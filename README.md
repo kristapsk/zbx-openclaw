@@ -10,7 +10,7 @@ This setup provides **lightweight, portable monitoring** for a locally running O
 |------|----|---------------|
 | TCP port listening | `net.tcp.listen[]` | Zabbix agent (active) on host |
 | HTTP health (200 OK) | curl script | Zabbix agent (active) on host |
-| HTTP latency (ms) | curl + awk script | Zabbix agent (active) on host |
+| HTTP latency (ms) | curl script | Zabbix agent (active) on host |
 
 ---
 
@@ -74,40 +74,7 @@ systemctl restart zabbix-agent2
 
 ### 2. Scripts
 
-Create directory:
-
-```
-mkdir -p /etc/zabbix/scripts
-```
-
-#### openclaw_http_check.sh
-
-Returns `1` if HTTP status is 200, otherwise `0`.
-
-```
-#!/usr/bin/env bash
-set -euo pipefail
-
-url="${1:-http://127.0.0.1:18789/health}"
-
-code="$(curl -sS -o /dev/null -m 5 -w '%{http_code}' "$url" || true)"
-[[ "$code" == "200" ]] && echo 1 || echo 0
-```
-
-#### openclaw_http_latency_ms.sh
-
-Returns HTTP latency in **milliseconds** (integer).
-
-```
-#!/usr/bin/env bash
-set -euo pipefail
-
-url="${1:-http://127.0.0.1:18789/health}"
-
-t="$(curl -sS -o /dev/null -m 5 -w '%{time_total}' "$url" || echo 0)"
-
-awk "BEGIN { printf "%d\n", ($t * 1000) + 0.5 }"
-```
+Copy the provided scripts to the monitored host, to `/etc/zabbix/scripts/`.
 
 Set permissions:
 
@@ -145,15 +112,6 @@ Using **agent-executed scripts** is the correct and supported way to:
 - perform local HTTP checks
 - keep endpoints private
 - avoid exposing health ports externally
-
----
-
-## What this does not do
-
-- No process or systemd checks
-- No Docker integration
-- No server-side HTTP agent
-- No authentication or TLS handling
 
 ---
 
