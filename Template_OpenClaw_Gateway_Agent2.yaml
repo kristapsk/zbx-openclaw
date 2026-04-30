@@ -1,87 +1,76 @@
 zabbix_export:
-  version: "7.4"
-
+  version: '7.4'
   template_groups:
-    - uuid: "b9b4a6c2c6ff4c36a6c1f2cb0b2b11a1"
-      name: "Templates/Applications"
-
+    - uuid: 4abff66c37be497fb75bdce929c04e3e
+      name: Templates/Applications
   templates:
-    - uuid: "7d9fd7e1b2b9456a9e5d3a1bcb7a5f10"
-      template: "Template App OpenClaw Gateway"
-      name: "Template App OpenClaw Gateway"
+    - uuid: 7d9fd7e1b2b9456a9e5d3a1bcb7a5f10
+      template: 'Template App OpenClaw Gateway'
+      name: 'Template App OpenClaw Gateway'
       groups:
-        - name: "Templates/Applications"
-
-      macros:
-        - macro: "{$OPENCLOW_HOST}"
-          value: "127.0.0.1"
-          description: "Host/interface used for local health check URL"
-        - macro: "{$OPENCLOW_PORT}"
-          value: "18789"
-          description: "OpenClaw gateway TCP port"
-        - macro: "{$OPENCLOW_HEALTH_PATH}"
-          value: "/health"
-          description: "HTTP health path"
-        - macro: "{$OPENCLOW_LATENCY_WARN_MS}"
-          value: "500"
-          description: "Warn if avg latency exceeds this value (ms)"
-
+        - name: Templates/Applications
       items:
-        - uuid: "9f7e9f1a9a6c4d0ebc6b8a9f3e1c2d31"
-          name: "OpenClaw: TCP port listening"
+        - uuid: 9f7e9f1a9a6c4d0ebc6b8a9f3e1c2d31
+          name: 'OpenClaw: TCP port listening'
           type: ZABBIX_ACTIVE
-          key: "net.tcp.listen[{$OPENCLOW_PORT}]"
-          value_type: UNSIGNED
+          key: 'net.tcp.listen[{$OPENCLOW_PORT}]'
           delay: 30s
           history: 7d
-          trends: 365d
-          description: "1 if the TCP port is listening locally."
+          description: '1 if the TCP port is listening locally.'
           tags:
             - tag: Application
               value: OpenClaw
           triggers:
-            - uuid: "a4c3b2d1e0f84d1b9c8a7b6c5d4e3f21"
-              name: "OpenClaw: port is not listening"
-              expression: "last(/Template App OpenClaw Gateway/net.tcp.listen[{$OPENCLOW_PORT}])=0"
+            - uuid: a4c3b2d1e0f84d1b9c8a7b6c5d4e3f21
+              expression: 'max(/Template App OpenClaw Gateway/net.tcp.listen[{$OPENCLOW_PORT}],2m)=0'
+              recovery_mode: RECOVERY_EXPRESSION
+              recovery_expression: 'min(/Template App OpenClaw Gateway/net.tcp.listen[{$OPENCLOW_PORT}],1m)=1'
+              name: 'OpenClaw: port is not listening'
               priority: HIGH
-              description: "Gateway port is not listening locally."
-
-        - uuid: "1b2c3d4e5f6a4789a0b1c2d3e4f5a6b1"
-          name: "OpenClaw: health endpoint OK"
+              description: 'Gateway port is not listening locally.'
+        - uuid: 1b2c3d4e5f6a4789a0b1c2d3e4f5a6b1
+          name: 'OpenClaw: health endpoint OK'
           type: ZABBIX_ACTIVE
-          key: "openclaw.http.health[http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_HEALTH_PATH}]"
-          value_type: UNSIGNED
+          key: 'openclaw.http.health[http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_HEALTH_PATH}]'
           delay: 30s
           history: 7d
-          trends: 365d
-          description: "1 if health endpoint returns HTTP 200, else 0."
+          description: '1 if health endpoint returns HTTP 200, else 0.'
           tags:
             - tag: Application
               value: OpenClaw
           triggers:
-            - uuid: "f0e1d2c3b4a5498899aabbccddeeff01"
-              name: "OpenClaw: health endpoint failing (3m)"
-              expression: "min(/Template App OpenClaw Gateway/openclaw.http.health[http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_HEALTH_PATH}],3m)=0"
+            - uuid: f0e1d2c3b4a5498899aabbccddeeff01
+              expression: 'min(/Template App OpenClaw Gateway/openclaw.http.health[http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_HEALTH_PATH}],3m)=0'
+              name: 'OpenClaw: health endpoint failing (3m)'
               priority: HIGH
-              description: "Health endpoint has not returned HTTP 200 for 3 minutes."
-
-        - uuid: "8a7b6c5d4e3f4210b1c2d3e4f5a6b7c8"
-          name: "OpenClaw: health latency"
+              description: 'Health endpoint has not returned HTTP 200 for 3 minutes.'
+        - uuid: 8a7b6c5d4e3f4210b1c2d3e4f5a6b7c8
+          name: 'OpenClaw: health latency'
           type: ZABBIX_ACTIVE
-          key: "openclaw.http.latency_ms[http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_HEALTH_PATH}]"
-          value_type: UNSIGNED
-          units: "ms"
+          key: 'openclaw.http.latency_ms[http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_HEALTH_PATH}]'
           delay: 30s
           history: 7d
-          trends: 365d
-          description: "Health endpoint latency in milliseconds."
+          units: ms
+          description: 'Health endpoint latency in milliseconds.'
           tags:
             - tag: Application
               value: OpenClaw
           triggers:
-            - uuid: "0aa1bb2c3dd4478899aabbccddeeff02"
-              name: "OpenClaw: health latency high"
-              expression: "avg(/Template App OpenClaw Gateway/openclaw.http.latency_ms[http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_HEALTH_PATH}],5m)>{$OPENCLOW_LATENCY_WARN_MS}"
+            - uuid: 0aa1bb2c3dd4478899aabbccddeeff02
+              expression: 'avg(/Template App OpenClaw Gateway/openclaw.http.latency_ms[http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_HEALTH_PATH}],5m)>{$OPENCLOW_LATENCY_WARN_MS}'
+              name: 'OpenClaw: health latency high'
               priority: WARNING
-              description: "Average health latency over 5m exceeds threshold."
-
+              description: 'Average health latency over 5m exceeds threshold.'
+      macros:
+        - macro: '{$OPENCLOW_HEALTH_PATH}'
+          value: /health
+          description: 'HTTP health path'
+        - macro: '{$OPENCLOW_HOST}'
+          value: 127.0.0.1
+          description: 'Host/interface used for local health check URL'
+        - macro: '{$OPENCLOW_LATENCY_WARN_MS}'
+          value: '500'
+          description: 'Warn if avg latency exceeds this value (ms)'
+        - macro: '{$OPENCLOW_PORT}'
+          value: '18789'
+          description: 'OpenClaw gateway TCP port'
