@@ -20,7 +20,7 @@ zabbix_export:
         - uuid: 9f7e9f1a9a6c4d0ebc6b8a9f3e1c2d31
           name: 'OpenClaw: TCP port listening'
           type: ZABBIX_ACTIVE
-          key: 'net.tcp.listen[{$OPENCLOW_PORT}]'
+          key: 'net.tcp.listen[{$OPENCLAW_PORT}]'
           delay: 30s
           history: 7d
           description: 'Returns 1 when the configured Gateway TCP port is listening locally.'
@@ -29,7 +29,7 @@ zabbix_export:
               value: availability
           triggers:
             - uuid: a4c3b2d1e0f84d1b9c8a7b6c5d4e3f21
-              expression: 'max(/Template App OpenClaw Gateway/net.tcp.listen[{$OPENCLOW_PORT}],2m)=0'
+              expression: 'max(/Template App OpenClaw Gateway/net.tcp.listen[{$OPENCLAW_PORT}],2m)=0'
               name: 'OpenClaw: Gateway port is not listening'
               priority: HIGH
               description: 'The OpenClaw Gateway port has not been listening for two minutes.'
@@ -51,7 +51,7 @@ zabbix_export:
               error_handler: CUSTOM_VALUE
               error_handler_params: '0'
           master_item:
-            key: 'openclaw.prometheus["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_PROMETHEUS_PATH}","{$OPENCLOW_PROMETHEUS_TOKEN_FILE}"]'
+            key: 'openclaw.prometheus["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_PROMETHEUS_PATH}","{$OPENCLAW_PROMETHEUS_TOKEN_FILE}"]'
           tags:
             - tag: component
               value: telemetry
@@ -70,14 +70,14 @@ zabbix_export:
               error_handler: CUSTOM_VALUE
               error_handler_params: '0'
           master_item:
-            key: 'openclaw.prometheus["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_PROMETHEUS_PATH}","{$OPENCLOW_PROMETHEUS_TOKEN_FILE}"]'
+            key: 'openclaw.prometheus["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_PROMETHEUS_PATH}","{$OPENCLAW_PROMETHEUS_TOKEN_FILE}"]'
           tags:
             - tag: component
               value: telemetry
         - uuid: 1b2c3d4e5f6a4789a0b1c2d3e4f5a6b1
           name: 'OpenClaw: HTTP health endpoint OK'
           type: ZABBIX_ACTIVE
-          key: 'openclaw.http.health["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_HEALTH_PATH}"]'
+          key: 'openclaw.http.health["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_HEALTH_PATH}"]'
           delay: 30s
           history: 7d
           description: 'Returns 1 when the local OpenClaw health endpoint returns HTTP 200.'
@@ -87,7 +87,7 @@ zabbix_export:
         - uuid: 8a7b6c5d4e3f4210b1c2d3e4f5a6b7c8
           name: 'OpenClaw: HTTP health latency'
           type: ZABBIX_ACTIVE
-          key: 'openclaw.http.latency_ms["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_HEALTH_PATH}"]'
+          key: 'openclaw.http.latency_ms["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_HEALTH_PATH}"]'
           delay: 30s
           history: 7d
           units: ms
@@ -110,7 +110,7 @@ zabbix_export:
               error_handler: CUSTOM_VALUE
               error_handler_params: '0'
           master_item:
-            key: 'openclaw.prometheus["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_PROMETHEUS_PATH}","{$OPENCLOW_PROMETHEUS_TOKEN_FILE}"]'
+            key: 'openclaw.prometheus["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_PROMETHEUS_PATH}","{$OPENCLAW_PROMETHEUS_TOKEN_FILE}"]'
           tags:
             - tag: component
               value: liveness
@@ -129,7 +129,7 @@ zabbix_export:
               error_handler: CUSTOM_VALUE
               error_handler_params: '0'
           master_item:
-            key: 'openclaw.prometheus["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_PROMETHEUS_PATH}","{$OPENCLOW_PROMETHEUS_TOKEN_FILE}"]'
+            key: 'openclaw.prometheus["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_PROMETHEUS_PATH}","{$OPENCLAW_PROMETHEUS_TOKEN_FILE}"]'
           tags:
             - tag: component
               value: memory
@@ -149,7 +149,7 @@ zabbix_export:
               error_handler: CUSTOM_VALUE
               error_handler_params: '0'
           master_item:
-            key: 'openclaw.prometheus["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_PROMETHEUS_PATH}","{$OPENCLOW_PROMETHEUS_TOKEN_FILE}"]'
+            key: 'openclaw.prometheus["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_PROMETHEUS_PATH}","{$OPENCLAW_PROMETHEUS_TOKEN_FILE}"]'
           tags:
             - tag: component
               value: memory
@@ -168,7 +168,7 @@ zabbix_export:
               error_handler: CUSTOM_VALUE
               error_handler_params: '0'
           master_item:
-            key: 'openclaw.prometheus["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_PROMETHEUS_PATH}","{$OPENCLOW_PROMETHEUS_TOKEN_FILE}"]'
+            key: 'openclaw.prometheus["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_PROMETHEUS_PATH}","{$OPENCLAW_PROMETHEUS_TOKEN_FILE}"]'
           tags:
             - tag: component
               value: messages
@@ -187,7 +187,7 @@ zabbix_export:
               error_handler: CUSTOM_VALUE
               error_handler_params: '0'
           master_item:
-            key: 'openclaw.prometheus["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_PROMETHEUS_PATH}","{$OPENCLOW_PROMETHEUS_TOKEN_FILE}"]'
+            key: 'openclaw.prometheus["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_PROMETHEUS_PATH}","{$OPENCLAW_PROMETHEUS_TOKEN_FILE}"]'
           tags:
             - tag: component
               value: messages
@@ -206,7 +206,7 @@ zabbix_export:
               error_handler: CUSTOM_VALUE
               error_handler_params: '0'
           master_item:
-            key: 'openclaw.prometheus["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_PROMETHEUS_PATH}","{$OPENCLOW_PROMETHEUS_TOKEN_FILE}"]'
+            key: 'openclaw.prometheus["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_PROMETHEUS_PATH}","{$OPENCLAW_PROMETHEUS_TOKEN_FILE}"]'
           tags:
             - tag: component
               value: model
@@ -226,7 +226,7 @@ zabbix_export:
               error_handler: CUSTOM_VALUE
               error_handler_params: '0'
           master_item:
-            key: 'openclaw.prometheus["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_PROMETHEUS_PATH}","{$OPENCLOW_PROMETHEUS_TOKEN_FILE}"]'
+            key: 'openclaw.prometheus["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_PROMETHEUS_PATH}","{$OPENCLAW_PROMETHEUS_TOKEN_FILE}"]'
           tags:
             - tag: component
               value: usage
@@ -245,7 +245,7 @@ zabbix_export:
               error_handler: CUSTOM_VALUE
               error_handler_params: '0'
           master_item:
-            key: 'openclaw.prometheus["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_PROMETHEUS_PATH}","{$OPENCLOW_PROMETHEUS_TOKEN_FILE}"]'
+            key: 'openclaw.prometheus["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_PROMETHEUS_PATH}","{$OPENCLAW_PROMETHEUS_TOKEN_FILE}"]'
           tags:
             - tag: component
               value: model
@@ -264,7 +264,7 @@ zabbix_export:
               error_handler: CUSTOM_VALUE
               error_handler_params: '0'
           master_item:
-            key: 'openclaw.prometheus["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_PROMETHEUS_PATH}","{$OPENCLOW_PROMETHEUS_TOKEN_FILE}"]'
+            key: 'openclaw.prometheus["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_PROMETHEUS_PATH}","{$OPENCLAW_PROMETHEUS_TOKEN_FILE}"]'
           tags:
             - tag: component
               value: model
@@ -284,7 +284,7 @@ zabbix_export:
               error_handler: CUSTOM_VALUE
               error_handler_params: '0'
           master_item:
-            key: 'openclaw.prometheus["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_PROMETHEUS_PATH}","{$OPENCLOW_PROMETHEUS_TOKEN_FILE}"]'
+            key: 'openclaw.prometheus["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_PROMETHEUS_PATH}","{$OPENCLAW_PROMETHEUS_TOKEN_FILE}"]'
           tags:
             - tag: component
               value: usage
@@ -304,7 +304,7 @@ zabbix_export:
               error_handler: CUSTOM_VALUE
               error_handler_params: '0'
           master_item:
-            key: 'openclaw.prometheus["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_PROMETHEUS_PATH}","{$OPENCLOW_PROMETHEUS_TOKEN_FILE}"]'
+            key: 'openclaw.prometheus["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_PROMETHEUS_PATH}","{$OPENCLAW_PROMETHEUS_TOKEN_FILE}"]'
           tags:
             - tag: component
               value: usage
@@ -323,7 +323,7 @@ zabbix_export:
               error_handler: CUSTOM_VALUE
               error_handler_params: '0'
           master_item:
-            key: 'openclaw.prometheus["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_PROMETHEUS_PATH}","{$OPENCLOW_PROMETHEUS_TOKEN_FILE}"]'
+            key: 'openclaw.prometheus["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_PROMETHEUS_PATH}","{$OPENCLAW_PROMETHEUS_TOKEN_FILE}"]'
           tags:
             - tag: component
               value: telemetry
@@ -342,7 +342,7 @@ zabbix_export:
               error_handler: CUSTOM_VALUE
               error_handler_params: '0'
           master_item:
-            key: 'openclaw.prometheus["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_PROMETHEUS_PATH}","{$OPENCLOW_PROMETHEUS_TOKEN_FILE}"]'
+            key: 'openclaw.prometheus["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_PROMETHEUS_PATH}","{$OPENCLAW_PROMETHEUS_TOKEN_FILE}"]'
           tags:
             - tag: component
               value: telemetry
@@ -361,7 +361,7 @@ zabbix_export:
               error_handler: CUSTOM_VALUE
               error_handler_params: '0'
           master_item:
-            key: 'openclaw.prometheus["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_PROMETHEUS_PATH}","{$OPENCLOW_PROMETHEUS_TOKEN_FILE}"]'
+            key: 'openclaw.prometheus["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_PROMETHEUS_PATH}","{$OPENCLAW_PROMETHEUS_TOKEN_FILE}"]'
           tags:
             - tag: component
               value: telemetry
@@ -380,15 +380,15 @@ zabbix_export:
               error_handler: CUSTOM_VALUE
               error_handler_params: '0'
           master_item:
-            key: 'openclaw.prometheus["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_PROMETHEUS_PATH}","{$OPENCLOW_PROMETHEUS_TOKEN_FILE}"]'
+            key: 'openclaw.prometheus["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_PROMETHEUS_PATH}","{$OPENCLAW_PROMETHEUS_TOKEN_FILE}"]'
           tags:
             - tag: component
               value: telemetry
         - uuid: c95eddb8992d4ea58dc3ba19934cd075
           name: 'OpenClaw: Prometheus metrics raw'
           type: ZABBIX_ACTIVE
-          key: 'openclaw.prometheus["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_PROMETHEUS_PATH}","{$OPENCLOW_PROMETHEUS_TOKEN_FILE}"]'
-          delay: '{$OPENCLOW_PROMETHEUS_INTERVAL}'
+          key: 'openclaw.prometheus["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_PROMETHEUS_PATH}","{$OPENCLAW_PROMETHEUS_TOKEN_FILE}"]'
+          delay: '{$OPENCLAW_PROMETHEUS_INTERVAL}'
           history: '0'
           value_type: TEXT
           description: |
@@ -413,7 +413,7 @@ zabbix_export:
               error_handler: CUSTOM_VALUE
               error_handler_params: '0'
           master_item:
-            key: 'openclaw.prometheus["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_PROMETHEUS_PATH}","{$OPENCLOW_PROMETHEUS_TOKEN_FILE}"]'
+            key: 'openclaw.prometheus["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_PROMETHEUS_PATH}","{$OPENCLAW_PROMETHEUS_TOKEN_FILE}"]'
           tags:
             - tag: component
               value: queue
@@ -433,7 +433,7 @@ zabbix_export:
               error_handler: CUSTOM_VALUE
               error_handler_params: '0'
           master_item:
-            key: 'openclaw.prometheus["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_PROMETHEUS_PATH}","{$OPENCLOW_PROMETHEUS_TOKEN_FILE}"]'
+            key: 'openclaw.prometheus["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_PROMETHEUS_PATH}","{$OPENCLAW_PROMETHEUS_TOKEN_FILE}"]'
           tags:
             - tag: component
               value: runs
@@ -453,7 +453,7 @@ zabbix_export:
               error_handler: CUSTOM_VALUE
               error_handler_params: '0'
           master_item:
-            key: 'openclaw.prometheus["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_PROMETHEUS_PATH}","{$OPENCLOW_PROMETHEUS_TOKEN_FILE}"]'
+            key: 'openclaw.prometheus["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_PROMETHEUS_PATH}","{$OPENCLAW_PROMETHEUS_TOKEN_FILE}"]'
           tags:
             - tag: component
               value: runs
@@ -472,7 +472,7 @@ zabbix_export:
               error_handler: CUSTOM_VALUE
               error_handler_params: '0'
           master_item:
-            key: 'openclaw.prometheus["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_PROMETHEUS_PATH}","{$OPENCLOW_PROMETHEUS_TOKEN_FILE}"]'
+            key: 'openclaw.prometheus["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_PROMETHEUS_PATH}","{$OPENCLAW_PROMETHEUS_TOKEN_FILE}"]'
           tags:
             - tag: component
               value: queue
@@ -491,7 +491,7 @@ zabbix_export:
               error_handler: CUSTOM_VALUE
               error_handler_params: '0'
           master_item:
-            key: 'openclaw.prometheus["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_PROMETHEUS_PATH}","{$OPENCLOW_PROMETHEUS_TOKEN_FILE}"]'
+            key: 'openclaw.prometheus["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_PROMETHEUS_PATH}","{$OPENCLAW_PROMETHEUS_TOKEN_FILE}"]'
           tags:
             - tag: component
               value: sessions
@@ -510,7 +510,7 @@ zabbix_export:
               error_handler: CUSTOM_VALUE
               error_handler_params: '0'
           master_item:
-            key: 'openclaw.prometheus["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_PROMETHEUS_PATH}","{$OPENCLOW_PROMETHEUS_TOKEN_FILE}"]'
+            key: 'openclaw.prometheus["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_PROMETHEUS_PATH}","{$OPENCLAW_PROMETHEUS_TOKEN_FILE}"]'
           tags:
             - tag: component
               value: telemetry
@@ -529,7 +529,7 @@ zabbix_export:
               error_handler: CUSTOM_VALUE
               error_handler_params: '0'
           master_item:
-            key: 'openclaw.prometheus["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_PROMETHEUS_PATH}","{$OPENCLOW_PROMETHEUS_TOKEN_FILE}"]'
+            key: 'openclaw.prometheus["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_PROMETHEUS_PATH}","{$OPENCLAW_PROMETHEUS_TOKEN_FILE}"]'
           tags:
             - tag: component
               value: security
@@ -548,7 +548,7 @@ zabbix_export:
               error_handler: CUSTOM_VALUE
               error_handler_params: '0'
           master_item:
-            key: 'openclaw.prometheus["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_PROMETHEUS_PATH}","{$OPENCLOW_PROMETHEUS_TOKEN_FILE}"]'
+            key: 'openclaw.prometheus["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_PROMETHEUS_PATH}","{$OPENCLAW_PROMETHEUS_TOKEN_FILE}"]'
           tags:
             - tag: component
               value: tools
@@ -567,71 +567,71 @@ zabbix_export:
               error_handler: CUSTOM_VALUE
               error_handler_params: '0'
           master_item:
-            key: 'openclaw.prometheus["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_PROMETHEUS_PATH}","{$OPENCLOW_PROMETHEUS_TOKEN_FILE}"]'
+            key: 'openclaw.prometheus["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_PROMETHEUS_PATH}","{$OPENCLAW_PROMETHEUS_TOKEN_FILE}"]'
           tags:
             - tag: component
               value: tools
       macros:
-        - macro: '{$OPENCLOW_COST_DAILY_WARN_USD}'
+        - macro: '{$OPENCLAW_COST_DAILY_WARN_USD}'
           value: '0'
           description: 'Daily model-cost warning threshold in USD. Zero disables the trigger.'
-        - macro: '{$OPENCLOW_HEALTH_PATH}'
+        - macro: '{$OPENCLAW_HEALTH_PATH}'
           value: /health
           description: 'Unauthenticated OpenClaw liveness endpoint.'
-        - macro: '{$OPENCLOW_HOST}'
+        - macro: '{$OPENCLAW_HOST}'
           value: 127.0.0.1
           description: 'Host or interface used by local agent-executed HTTP checks.'
-        - macro: '{$OPENCLOW_LATENCY_WARN_MS}'
+        - macro: '{$OPENCLAW_LATENCY_WARN_MS}'
           value: '500'
           description: 'Five-minute average health latency warning threshold in milliseconds.'
-        - macro: '{$OPENCLOW_LIVENESS_WARNINGS_WARN}'
+        - macro: '{$OPENCLAW_LIVENESS_WARNINGS_WARN}'
           value: '1'
           description: 'New liveness warnings within ten minutes required to trigger a warning.'
-        - macro: '{$OPENCLOW_MEMORY_PRESSURE_WARN}'
+        - macro: '{$OPENCLAW_MEMORY_PRESSURE_WARN}'
           value: '1'
           description: 'New memory-pressure events within ten minutes required to trigger a warning.'
-        - macro: '{$OPENCLOW_MESSAGE_ERRORS_WARN}'
+        - macro: '{$OPENCLAW_MESSAGE_ERRORS_WARN}'
           value: '1'
           description: 'New message processing or delivery errors within five minutes required to trigger a warning.'
-        - macro: '{$OPENCLOW_MODEL_ERRORS_WARN}'
+        - macro: '{$OPENCLAW_MODEL_ERRORS_WARN}'
           value: '1'
           description: 'New model call errors within five minutes required to trigger a warning.'
-        - macro: '{$OPENCLOW_MODEL_FAILOVERS_WARN}'
+        - macro: '{$OPENCLAW_MODEL_FAILOVERS_WARN}'
           value: '1'
           description: 'New model failovers within ten minutes required to trigger a warning.'
-        - macro: '{$OPENCLOW_PORT}'
+        - macro: '{$OPENCLAW_PORT}'
           value: '18789'
           description: 'OpenClaw Gateway TCP port.'
-        - macro: '{$OPENCLOW_PROMETHEUS_INTERVAL}'
+        - macro: '{$OPENCLAW_PROMETHEUS_INTERVAL}'
           value: 1m
           description: 'Prometheus scrape interval.'
-        - macro: '{$OPENCLOW_PROMETHEUS_PATH}'
+        - macro: '{$OPENCLAW_PROMETHEUS_PATH}'
           value: /api/diagnostics/prometheus
           description: 'Path registered by the optional diagnostics-prometheus plugin.'
-        - macro: '{$OPENCLOW_PROMETHEUS_REQUIRED}'
+        - macro: '{$OPENCLAW_PROMETHEUS_REQUIRED}'
           value: '0'
           description: 'Set to 1 to alert when optional Prometheus telemetry is unavailable or empty.'
-        - macro: '{$OPENCLOW_PROMETHEUS_TOKEN_FILE}'
+        - macro: '{$OPENCLAW_PROMETHEUS_TOKEN_FILE}'
           value: /etc/zabbix/secrets/openclaw_gateway_token
           description: 'File containing the Gateway token or password used as a Bearer credential.'
-        - macro: '{$OPENCLOW_QUEUE_DEPTH_WARN}'
+        - macro: '{$OPENCLAW_QUEUE_DEPTH_WARN}'
           value: '10'
           description: 'Session queue depth warning threshold.'
-        - macro: '{$OPENCLOW_STUCK_SESSIONS_WARN}'
+        - macro: '{$OPENCLAW_STUCK_SESSIONS_WARN}'
           value: '1'
           description: 'New stuck-session events within ten minutes required to trigger a high-severity event.'
-        - macro: '{$OPENCLOW_TOOL_BLOCKED_WARN}'
+        - macro: '{$OPENCLAW_TOOL_BLOCKED_WARN}'
           value: '1'
           description: 'New blocked tool executions within five minutes required to create an information event.'
-        - macro: '{$OPENCLOW_TOOL_ERRORS_WARN}'
+        - macro: '{$OPENCLAW_TOOL_ERRORS_WARN}'
           value: '1'
           description: 'New tool execution errors within five minutes required to trigger a warning.'
   triggers:
     - uuid: 958cd03e98ab495489c276079c20cf08
-      expression: '{$OPENCLOW_COST_DAILY_WARN_USD}>0 and last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and (last(/Template App OpenClaw Gateway/openclaw.model.cost.usd.total)-min(/Template App OpenClaw Gateway/openclaw.model.cost.usd.total,1d))>{$OPENCLOW_COST_DAILY_WARN_USD}'
+      expression: '{$OPENCLAW_COST_DAILY_WARN_USD}>0 and last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and (last(/Template App OpenClaw Gateway/openclaw.model.cost.usd.total)-min(/Template App OpenClaw Gateway/openclaw.model.cost.usd.total,1d))>{$OPENCLAW_COST_DAILY_WARN_USD}'
       name: 'OpenClaw: Daily model cost is high'
       priority: WARNING
-      description: 'Disabled by default. Set {$OPENCLOW_COST_DAILY_WARN_USD} to a positive amount to enable it.'
+      description: 'Disabled by default. Set {$OPENCLAW_COST_DAILY_WARN_USD} to a positive amount to enable it.'
       tags:
         - tag: scope
           value: capacity
@@ -643,7 +643,7 @@ zabbix_export:
         - tag: scope
           value: capacity
     - uuid: f0e1d2c3b4a5498899aabbccddeeff01
-      expression: 'max(/Template App OpenClaw Gateway/openclaw.http.health["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_HEALTH_PATH}"],3m)=0 and last(/Template App OpenClaw Gateway/net.tcp.listen[{$OPENCLOW_PORT}])=1'
+      expression: 'max(/Template App OpenClaw Gateway/openclaw.http.health["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_HEALTH_PATH}"],3m)=0 and last(/Template App OpenClaw Gateway/net.tcp.listen[{$OPENCLAW_PORT}])=1'
       name: 'OpenClaw: Health endpoint is failing'
       priority: HIGH
       description: 'The Gateway port is listening, but the health endpoint has not returned HTTP 200 for three minutes.'
@@ -651,7 +651,7 @@ zabbix_export:
         - tag: scope
           value: availability
     - uuid: 0aa1bb2c3dd4478899aabbccddeeff02
-      expression: 'avg(/Template App OpenClaw Gateway/openclaw.http.latency_ms["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_HEALTH_PATH}"],5m)>{$OPENCLOW_LATENCY_WARN_MS} and last(/Template App OpenClaw Gateway/openclaw.http.health["http://{$OPENCLOW_HOST}:{$OPENCLOW_PORT}{$OPENCLOW_HEALTH_PATH}"])=1'
+      expression: 'avg(/Template App OpenClaw Gateway/openclaw.http.latency_ms["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_HEALTH_PATH}"],5m)>{$OPENCLAW_LATENCY_WARN_MS} and last(/Template App OpenClaw Gateway/openclaw.http.health["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_HEALTH_PATH}"])=1'
       name: 'OpenClaw: Health endpoint latency is high'
       priority: WARNING
       description: 'Average local health-endpoint latency exceeds the configured threshold.'
@@ -666,35 +666,35 @@ zabbix_export:
           last(/Template App OpenClaw Gateway/openclaw.liveness.warnings.total)
           -
           min(/Template App OpenClaw Gateway/openclaw.liveness.warnings.total,10m)
-        )>={$OPENCLOW_LIVENESS_WARNINGS_WARN}
+        )>={$OPENCLAW_LIVENESS_WARNINGS_WARN}
       name: 'OpenClaw: Liveness warnings detected'
       priority: WARNING
       tags:
         - tag: scope
           value: performance
     - uuid: e5ee61d6c5be40229e8c32de026faa02
-      expression: 'last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and (last(/Template App OpenClaw Gateway/openclaw.memory.pressure.total)-min(/Template App OpenClaw Gateway/openclaw.memory.pressure.total,10m))>={$OPENCLOW_MEMORY_PRESSURE_WARN}'
+      expression: 'last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and (last(/Template App OpenClaw Gateway/openclaw.memory.pressure.total)-min(/Template App OpenClaw Gateway/openclaw.memory.pressure.total,10m))>={$OPENCLAW_MEMORY_PRESSURE_WARN}'
       name: 'OpenClaw: Memory pressure detected'
       priority: WARNING
       tags:
         - tag: scope
           value: capacity
     - uuid: f33318f090dc41c6af5e4c7a3b9f17db
-      expression: 'last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and (last(/Template App OpenClaw Gateway/openclaw.messages.delivery.errors.total)-min(/Template App OpenClaw Gateway/openclaw.messages.delivery.errors.total,5m))>={$OPENCLOW_MESSAGE_ERRORS_WARN}'
+      expression: 'last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and (last(/Template App OpenClaw Gateway/openclaw.messages.delivery.errors.total)-min(/Template App OpenClaw Gateway/openclaw.messages.delivery.errors.total,5m))>={$OPENCLAW_MESSAGE_ERRORS_WARN}'
       name: 'OpenClaw: Message delivery errors detected'
       priority: WARNING
       tags:
         - tag: scope
           value: performance
     - uuid: ecd8ea4bf8d1422b900400520fd7472f
-      expression: 'last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and (last(/Template App OpenClaw Gateway/openclaw.messages.processed.errors.total)-min(/Template App OpenClaw Gateway/openclaw.messages.processed.errors.total,5m))>={$OPENCLOW_MESSAGE_ERRORS_WARN}'
+      expression: 'last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and (last(/Template App OpenClaw Gateway/openclaw.messages.processed.errors.total)-min(/Template App OpenClaw Gateway/openclaw.messages.processed.errors.total,5m))>={$OPENCLAW_MESSAGE_ERRORS_WARN}'
       name: 'OpenClaw: Message processing errors detected'
       priority: WARNING
       tags:
         - tag: scope
           value: performance
     - uuid: 0a3c0e0e3c524a2b93b628d511729541
-      expression: 'last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and (last(/Template App OpenClaw Gateway/openclaw.model.errors.total)-min(/Template App OpenClaw Gateway/openclaw.model.errors.total,5m))>={$OPENCLOW_MODEL_ERRORS_WARN}'
+      expression: 'last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and (last(/Template App OpenClaw Gateway/openclaw.model.errors.total)-min(/Template App OpenClaw Gateway/openclaw.model.errors.total,5m))>={$OPENCLAW_MODEL_ERRORS_WARN}'
       name: 'OpenClaw: Model call errors detected'
       priority: WARNING
       description: 'The model-error counter increased by the configured amount during the last five minutes.'
@@ -702,7 +702,7 @@ zabbix_export:
         - tag: scope
           value: performance
     - uuid: 3d9762f3027d4f1083abb87be96db098
-      expression: 'last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and (last(/Template App OpenClaw Gateway/openclaw.model.failovers.total)-min(/Template App OpenClaw Gateway/openclaw.model.failovers.total,10m))>={$OPENCLOW_MODEL_FAILOVERS_WARN}'
+      expression: 'last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and (last(/Template App OpenClaw Gateway/openclaw.model.failovers.total)-min(/Template App OpenClaw Gateway/openclaw.model.failovers.total,10m))>={$OPENCLAW_MODEL_FAILOVERS_WARN}'
       name: 'OpenClaw: Model failovers detected'
       priority: WARNING
       description: 'The model-failover counter increased by the configured amount during the last ten minutes.'
@@ -718,30 +718,30 @@ zabbix_export:
         - tag: scope
           value: capacity
     - uuid: a4aa0ccf365b4f6e868540150cff1fec
-      expression: '{$OPENCLOW_PROMETHEUS_REQUIRED}=1 and max(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present,5m)=0 and last(/Template App OpenClaw Gateway/openclaw.prometheus.available)=1'
+      expression: '{$OPENCLAW_PROMETHEUS_REQUIRED}=1 and max(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present,5m)=0 and last(/Template App OpenClaw Gateway/openclaw.prometheus.available)=1'
       name: 'OpenClaw: Required Prometheus endpoint contains no metrics'
       priority: WARNING
-      description: 'The endpoint responds, but diagnostics data is empty. Enabled only when {$OPENCLOW_PROMETHEUS_REQUIRED}=1.'
+      description: 'The endpoint responds, but diagnostics data is empty. Enabled only when {$OPENCLAW_PROMETHEUS_REQUIRED}=1.'
       tags:
         - tag: scope
           value: availability
     - uuid: 975c443f2b134d0e8db4bf848e9df912
-      expression: '{$OPENCLOW_PROMETHEUS_REQUIRED}=1 and max(/Template App OpenClaw Gateway/openclaw.prometheus.available,5m)=0 and last(/Template App OpenClaw Gateway/net.tcp.listen[{$OPENCLOW_PORT}])=1'
+      expression: '{$OPENCLAW_PROMETHEUS_REQUIRED}=1 and max(/Template App OpenClaw Gateway/openclaw.prometheus.available,5m)=0 and last(/Template App OpenClaw Gateway/net.tcp.listen[{$OPENCLAW_PORT}])=1'
       name: 'OpenClaw: Required Prometheus endpoint is unavailable'
       priority: WARNING
-      description: 'Enabled only when {$OPENCLOW_PROMETHEUS_REQUIRED}=1.'
+      description: 'Enabled only when {$OPENCLAW_PROMETHEUS_REQUIRED}=1.'
       tags:
         - tag: scope
           value: availability
     - uuid: 79c39fd6dc014d688a2545e29da913e1
-      expression: 'last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and max(/Template App OpenClaw Gateway/openclaw.session.queue.depth,5m)>{$OPENCLOW_QUEUE_DEPTH_WARN}'
+      expression: 'last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and max(/Template App OpenClaw Gateway/openclaw.session.queue.depth,5m)>{$OPENCLAW_QUEUE_DEPTH_WARN}'
       name: 'OpenClaw: Session queue depth is high'
       priority: WARNING
       tags:
         - tag: scope
           value: capacity
     - uuid: 525ff7b4940a40dcb4a02eb8b053bd08
-      expression: 'last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and (last(/Template App OpenClaw Gateway/openclaw.sessions.stuck.total)-min(/Template App OpenClaw Gateway/openclaw.sessions.stuck.total,10m))>={$OPENCLOW_STUCK_SESSIONS_WARN}'
+      expression: 'last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and (last(/Template App OpenClaw Gateway/openclaw.sessions.stuck.total)-min(/Template App OpenClaw Gateway/openclaw.sessions.stuck.total,10m))>={$OPENCLAW_STUCK_SESSIONS_WARN}'
       name: 'OpenClaw: Stuck sessions detected'
       priority: HIGH
       tags:
@@ -755,7 +755,7 @@ zabbix_export:
         - tag: scope
           value: performance
     - uuid: fa4087766ae74523b9e9b548bd08505a
-      expression: 'last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and (last(/Template App OpenClaw Gateway/openclaw.tools.errors.total)-min(/Template App OpenClaw Gateway/openclaw.tools.errors.total,5m))>={$OPENCLOW_TOOL_ERRORS_WARN}'
+      expression: 'last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and (last(/Template App OpenClaw Gateway/openclaw.tools.errors.total)-min(/Template App OpenClaw Gateway/openclaw.tools.errors.total,5m))>={$OPENCLAW_TOOL_ERRORS_WARN}'
       name: 'OpenClaw: Tool execution errors detected'
       priority: WARNING
       description: 'The tool-error counter increased by the configured amount during the last five minutes.'
@@ -763,7 +763,7 @@ zabbix_export:
         - tag: scope
           value: performance
     - uuid: f03ebc7fc73f4953ba126ff39ad0047f
-      expression: 'last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and (last(/Template App OpenClaw Gateway/openclaw.tools.blocked.total)-min(/Template App OpenClaw Gateway/openclaw.tools.blocked.total,5m))>={$OPENCLOW_TOOL_BLOCKED_WARN}'
+      expression: 'last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and (last(/Template App OpenClaw Gateway/openclaw.tools.blocked.total)-min(/Template App OpenClaw Gateway/openclaw.tools.blocked.total,5m))>={$OPENCLAW_TOOL_BLOCKED_WARN}'
       name: 'OpenClaw: Tool executions were blocked'
       priority: INFO
       description: 'The blocked-tool counter increased by the configured amount during the last five minutes.'

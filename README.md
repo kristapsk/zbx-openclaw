@@ -132,29 +132,26 @@ TCP and UserParameter checks on the monitored host.
 
 ## Template macros
 
-The existing `OPENCLOW` macro prefix is retained for compatibility with the
-original template and any host-level overrides already using it.
-
 | Macro | Default | Purpose |
 |---|---:|---|
-| `{$OPENCLOW_HOST}` | `127.0.0.1` | Host used by local HTTP checks |
-| `{$OPENCLOW_PORT}` | `18789` | Gateway TCP port |
-| `{$OPENCLOW_HEALTH_PATH}` | `/health` | Basic liveness path |
-| `{$OPENCLOW_LATENCY_WARN_MS}` | `500` | Five-minute average latency warning |
-| `{$OPENCLOW_PROMETHEUS_PATH}` | `/api/diagnostics/prometheus` | Optional metrics endpoint |
-| `{$OPENCLOW_PROMETHEUS_TOKEN_FILE}` | `/etc/zabbix/secrets/openclaw_gateway_token` | Bearer credential file |
-| `{$OPENCLOW_PROMETHEUS_INTERVAL}` | `1m` | Optional metrics collection interval |
-| `{$OPENCLOW_PROMETHEUS_REQUIRED}` | `0` | Set to `1` to alert when telemetry is unavailable or empty |
-| `{$OPENCLOW_MODEL_ERRORS_WARN}` | `1` | Model errors in five minutes |
-| `{$OPENCLOW_MODEL_FAILOVERS_WARN}` | `1` | Model failovers in ten minutes |
-| `{$OPENCLOW_TOOL_ERRORS_WARN}` | `1` | Tool errors in five minutes |
-| `{$OPENCLOW_TOOL_BLOCKED_WARN}` | `1` | Blocked tools in five minutes |
-| `{$OPENCLOW_MESSAGE_ERRORS_WARN}` | `1` | Message errors in five minutes |
-| `{$OPENCLOW_QUEUE_DEPTH_WARN}` | `10` | Session queue depth warning |
-| `{$OPENCLOW_STUCK_SESSIONS_WARN}` | `1` | Stuck-session events in ten minutes |
-| `{$OPENCLOW_LIVENESS_WARNINGS_WARN}` | `1` | Liveness warnings in ten minutes |
-| `{$OPENCLOW_MEMORY_PRESSURE_WARN}` | `1` | Memory-pressure events in ten minutes |
-| `{$OPENCLOW_COST_DAILY_WARN_USD}` | `0` | Daily cost warning; zero disables it |
+| `{$OPENCLAW_HOST}` | `127.0.0.1` | Host used by local HTTP checks |
+| `{$OPENCLAW_PORT}` | `18789` | Gateway TCP port |
+| `{$OPENCLAW_HEALTH_PATH}` | `/health` | Basic liveness path |
+| `{$OPENCLAW_LATENCY_WARN_MS}` | `500` | Five-minute average latency warning |
+| `{$OPENCLAW_PROMETHEUS_PATH}` | `/api/diagnostics/prometheus` | Optional metrics endpoint |
+| `{$OPENCLAW_PROMETHEUS_TOKEN_FILE}` | `/etc/zabbix/secrets/openclaw_gateway_token` | Bearer credential file |
+| `{$OPENCLAW_PROMETHEUS_INTERVAL}` | `1m` | Optional metrics collection interval |
+| `{$OPENCLAW_PROMETHEUS_REQUIRED}` | `0` | Set to `1` to alert when telemetry is unavailable or empty |
+| `{$OPENCLAW_MODEL_ERRORS_WARN}` | `1` | Model errors in five minutes |
+| `{$OPENCLAW_MODEL_FAILOVERS_WARN}` | `1` | Model failovers in ten minutes |
+| `{$OPENCLAW_TOOL_ERRORS_WARN}` | `1` | Tool errors in five minutes |
+| `{$OPENCLAW_TOOL_BLOCKED_WARN}` | `1` | Blocked tools in five minutes |
+| `{$OPENCLAW_MESSAGE_ERRORS_WARN}` | `1` | Message errors in five minutes |
+| `{$OPENCLAW_QUEUE_DEPTH_WARN}` | `10` | Session queue depth warning |
+| `{$OPENCLAW_STUCK_SESSIONS_WARN}` | `1` | Stuck-session events in ten minutes |
+| `{$OPENCLAW_LIVENESS_WARNINGS_WARN}` | `1` | Liveness warnings in ten minutes |
+| `{$OPENCLAW_MEMORY_PRESSURE_WARN}` | `1` | Memory-pressure events in ten minutes |
+| `{$OPENCLAW_COST_DAILY_WARN_USD}` | `0` | Daily cost warning; zero disables it |
 
 ## Verify the basic checks
 
@@ -325,14 +322,14 @@ The Prometheus raw item remains supported because the collector always emits
 valid synthetic metrics. All telemetry-based alert expressions are gated by
 `openclaw.prometheus.metrics_present=1`.
 
-By default, `{$OPENCLOW_PROMETHEUS_REQUIRED}=0`, so the absence of the plugin
+By default, `{$OPENCLAW_PROMETHEUS_REQUIRED}=0`, so the absence of the plugin
 creates no Prometheus availability problem. The original TCP, HTTP health and
 latency checks continue normally.
 
 Set this host macro to require the plugin and alert on its absence:
 
 ```text
-{$OPENCLOW_PROMETHEUS_REQUIRED}=1
+{$OPENCLAW_PROMETHEUS_REQUIRED}=1
 ```
 
 ## Security notes
