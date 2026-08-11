@@ -585,20 +585,20 @@ zabbix_export:
           value: '500'
           description: 'Five-minute average health latency warning threshold in milliseconds.'
         - macro: '{$OPENCLAW_LIVENESS_WARNINGS_WARN}'
-          value: '1'
-          description: 'New liveness warnings within ten minutes required to trigger a warning.'
+          value: '5'
+          description: 'New liveness warnings within fifteen minutes required to create an information event.'
         - macro: '{$OPENCLAW_MEMORY_PRESSURE_WARN}'
-          value: '1'
-          description: 'New memory-pressure events within ten minutes required to trigger a warning.'
+          value: '2'
+          description: 'New memory-pressure events within fifteen minutes required to trigger an average-severity event.'
         - macro: '{$OPENCLAW_MESSAGE_ERRORS_WARN}'
-          value: '1'
-          description: 'New message processing or delivery errors within five minutes required to trigger a warning.'
+          value: '5'
+          description: 'New message processing or delivery errors within ten minutes required to trigger a warning.'
         - macro: '{$OPENCLAW_MODEL_ERRORS_WARN}'
-          value: '1'
-          description: 'New model call errors within five minutes required to trigger a warning.'
+          value: '3'
+          description: 'New model call errors within ten minutes required to trigger a warning.'
         - macro: '{$OPENCLAW_MODEL_FAILOVERS_WARN}'
-          value: '1'
-          description: 'New model failovers within ten minutes required to trigger a warning.'
+          value: '3'
+          description: 'New model failovers within fifteen minutes required to trigger a warning.'
         - macro: '{$OPENCLAW_PORT}'
           value: '18789'
           description: 'OpenClaw Gateway TCP port.'
@@ -618,14 +618,14 @@ zabbix_export:
           value: '10'
           description: 'Session queue depth warning threshold.'
         - macro: '{$OPENCLAW_STUCK_SESSIONS_WARN}'
-          value: '1'
-          description: 'New stuck-session events within ten minutes required to trigger a high-severity event.'
+          value: '2'
+          description: 'New stuck-session events within fifteen minutes required to trigger an average-severity event.'
         - macro: '{$OPENCLAW_TOOL_BLOCKED_WARN}'
-          value: '1'
-          description: 'New blocked tool executions within five minutes required to create an information event.'
+          value: '3'
+          description: 'New blocked tool executions within ten minutes required to create an information event.'
         - macro: '{$OPENCLAW_TOOL_ERRORS_WARN}'
-          value: '1'
-          description: 'New tool execution errors within five minutes required to trigger a warning.'
+          value: '5'
+          description: 'New tool execution errors within ten minutes required to trigger a warning.'
   triggers:
     - uuid: 958cd03e98ab495489c276079c20cf08
       expression: '{$OPENCLAW_COST_DAILY_WARN_USD}>0 and last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and (last(/Template App OpenClaw Gateway/openclaw.model.cost.usd.total)-min(/Template App OpenClaw Gateway/openclaw.model.cost.usd.total,1d))>{$OPENCLAW_COST_DAILY_WARN_USD}'
@@ -636,7 +636,14 @@ zabbix_export:
         - tag: scope
           value: capacity
     - uuid: 0df17690641c4f7db3699a535eef8cf9
-      expression: 'last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and (last(/Template App OpenClaw Gateway/openclaw.diagnostics.queue.dropped.total)-min(/Template App OpenClaw Gateway/openclaw.diagnostics.queue.dropped.total,10m))>0'
+      expression: |
+        min(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present,10m)=1
+        and
+        (
+          last(/Template App OpenClaw Gateway/openclaw.diagnostics.queue.dropped.total)
+          -
+          min(/Template App OpenClaw Gateway/openclaw.diagnostics.queue.dropped.total,10m)
+        )>0
       name: 'OpenClaw: Diagnostic events are being dropped'
       priority: WARNING
       tags:
@@ -660,57 +667,99 @@ zabbix_export:
           value: performance
     - uuid: c06164cdcb61400485e3ce3410f85ac4
       expression: |
-        min(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present,10m)=1
+        min(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present,15m)=1
         and
         (
           last(/Template App OpenClaw Gateway/openclaw.liveness.warnings.total)
           -
-          min(/Template App OpenClaw Gateway/openclaw.liveness.warnings.total,10m)
+          min(/Template App OpenClaw Gateway/openclaw.liveness.warnings.total,15m)
         )>={$OPENCLAW_LIVENESS_WARNINGS_WARN}
       name: 'OpenClaw: Liveness warnings detected'
-      priority: WARNING
+      priority: INFO
       tags:
         - tag: scope
           value: performance
     - uuid: e5ee61d6c5be40229e8c32de026faa02
-      expression: 'last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and (last(/Template App OpenClaw Gateway/openclaw.memory.pressure.total)-min(/Template App OpenClaw Gateway/openclaw.memory.pressure.total,10m))>={$OPENCLAW_MEMORY_PRESSURE_WARN}'
+      expression: |
+        min(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present,15m)=1
+        and
+        (
+          last(/Template App OpenClaw Gateway/openclaw.memory.pressure.total)
+          -
+          min(/Template App OpenClaw Gateway/openclaw.memory.pressure.total,15m)
+        )>={$OPENCLAW_MEMORY_PRESSURE_WARN}
       name: 'OpenClaw: Memory pressure detected'
-      priority: WARNING
+      priority: AVERAGE
       tags:
         - tag: scope
           value: capacity
     - uuid: f33318f090dc41c6af5e4c7a3b9f17db
-      expression: 'last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and (last(/Template App OpenClaw Gateway/openclaw.messages.delivery.errors.total)-min(/Template App OpenClaw Gateway/openclaw.messages.delivery.errors.total,5m))>={$OPENCLAW_MESSAGE_ERRORS_WARN}'
+      expression: |
+        min(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present,10m)=1
+        and
+        (
+          last(/Template App OpenClaw Gateway/openclaw.messages.delivery.errors.total)
+          -
+          min(/Template App OpenClaw Gateway/openclaw.messages.delivery.errors.total,10m)
+        )>={$OPENCLAW_MESSAGE_ERRORS_WARN}
       name: 'OpenClaw: Message delivery errors detected'
       priority: WARNING
       tags:
         - tag: scope
           value: performance
     - uuid: ecd8ea4bf8d1422b900400520fd7472f
-      expression: 'last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and (last(/Template App OpenClaw Gateway/openclaw.messages.processed.errors.total)-min(/Template App OpenClaw Gateway/openclaw.messages.processed.errors.total,5m))>={$OPENCLAW_MESSAGE_ERRORS_WARN}'
+      expression: |
+        min(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present,10m)=1
+        and
+        (
+          last(/Template App OpenClaw Gateway/openclaw.messages.processed.errors.total)
+          -
+          min(/Template App OpenClaw Gateway/openclaw.messages.processed.errors.total,10m)
+        )>={$OPENCLAW_MESSAGE_ERRORS_WARN}
       name: 'OpenClaw: Message processing errors detected'
       priority: WARNING
       tags:
         - tag: scope
           value: performance
     - uuid: 0a3c0e0e3c524a2b93b628d511729541
-      expression: 'last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and (last(/Template App OpenClaw Gateway/openclaw.model.errors.total)-min(/Template App OpenClaw Gateway/openclaw.model.errors.total,5m))>={$OPENCLAW_MODEL_ERRORS_WARN}'
+      expression: |
+        min(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present,10m)=1
+        and
+        (
+          last(/Template App OpenClaw Gateway/openclaw.model.errors.total)
+          -
+          min(/Template App OpenClaw Gateway/openclaw.model.errors.total,10m)
+        )>={$OPENCLAW_MODEL_ERRORS_WARN}
       name: 'OpenClaw: Model call errors detected'
       priority: WARNING
-      description: 'The model-error counter increased by the configured amount during the last five minutes.'
+      description: 'The model-error counter increased by the configured amount during the last ten minutes, after telemetry has been continuously available for that window.'
       tags:
         - tag: scope
           value: performance
     - uuid: 3d9762f3027d4f1083abb87be96db098
-      expression: 'last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and (last(/Template App OpenClaw Gateway/openclaw.model.failovers.total)-min(/Template App OpenClaw Gateway/openclaw.model.failovers.total,10m))>={$OPENCLAW_MODEL_FAILOVERS_WARN}'
+      expression: |
+        min(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present,15m)=1
+        and
+        (
+          last(/Template App OpenClaw Gateway/openclaw.model.failovers.total)
+          -
+          min(/Template App OpenClaw Gateway/openclaw.model.failovers.total,15m)
+        )>={$OPENCLAW_MODEL_FAILOVERS_WARN}
       name: 'OpenClaw: Model failovers detected'
       priority: WARNING
-      description: 'The model-failover counter increased by the configured amount during the last ten minutes.'
+      description: 'The model-failover counter increased by the configured amount during the last fifteen minutes, after telemetry has been continuously available for that window.'
       tags:
         - tag: scope
           value: performance
     - uuid: 2a740f44051b4165819ff80d71f21eab
-      expression: 'last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and (last(/Template App OpenClaw Gateway/openclaw.prometheus.series_dropped.total)-min(/Template App OpenClaw Gateway/openclaw.prometheus.series_dropped.total,10m))>0'
+      expression: |
+        min(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present,10m)=1
+        and
+        (
+          last(/Template App OpenClaw Gateway/openclaw.prometheus.series_dropped.total)
+          -
+          min(/Template App OpenClaw Gateway/openclaw.prometheus.series_dropped.total,10m)
+        )>0
       name: 'OpenClaw: Prometheus series are being dropped'
       priority: WARNING
       description: 'The exporter reached or exceeded its retained-series capacity.'
@@ -741,32 +790,60 @@ zabbix_export:
         - tag: scope
           value: capacity
     - uuid: 525ff7b4940a40dcb4a02eb8b053bd08
-      expression: 'last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and (last(/Template App OpenClaw Gateway/openclaw.sessions.stuck.total)-min(/Template App OpenClaw Gateway/openclaw.sessions.stuck.total,10m))>={$OPENCLAW_STUCK_SESSIONS_WARN}'
+      expression: |
+        min(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present,15m)=1
+        and
+        (
+          last(/Template App OpenClaw Gateway/openclaw.sessions.stuck.total)
+          -
+          min(/Template App OpenClaw Gateway/openclaw.sessions.stuck.total,15m)
+        )>={$OPENCLAW_STUCK_SESSIONS_WARN}
       name: 'OpenClaw: Stuck sessions detected'
-      priority: HIGH
+      priority: AVERAGE
       tags:
         - tag: scope
           value: availability
     - uuid: e1c8aca926614a6f82424610a7a558c7
-      expression: 'last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and (last(/Template App OpenClaw Gateway/openclaw.telemetry.exporter.errors.total)-min(/Template App OpenClaw Gateway/openclaw.telemetry.exporter.errors.total,10m))>0'
+      expression: |
+        min(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present,10m)=1
+        and
+        (
+          last(/Template App OpenClaw Gateway/openclaw.telemetry.exporter.errors.total)
+          -
+          min(/Template App OpenClaw Gateway/openclaw.telemetry.exporter.errors.total,10m)
+        )>0
       name: 'OpenClaw: Telemetry exporter errors detected'
       priority: WARNING
       tags:
         - tag: scope
           value: performance
     - uuid: fa4087766ae74523b9e9b548bd08505a
-      expression: 'last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and (last(/Template App OpenClaw Gateway/openclaw.tools.errors.total)-min(/Template App OpenClaw Gateway/openclaw.tools.errors.total,5m))>={$OPENCLAW_TOOL_ERRORS_WARN}'
+      expression: |
+        min(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present,10m)=1
+        and
+        (
+          last(/Template App OpenClaw Gateway/openclaw.tools.errors.total)
+          -
+          min(/Template App OpenClaw Gateway/openclaw.tools.errors.total,10m)
+        )>={$OPENCLAW_TOOL_ERRORS_WARN}
       name: 'OpenClaw: Tool execution errors detected'
       priority: WARNING
-      description: 'The tool-error counter increased by the configured amount during the last five minutes.'
+      description: 'The tool-error counter increased by the configured amount during the last ten minutes, after telemetry has been continuously available for that window.'
       tags:
         - tag: scope
           value: performance
     - uuid: f03ebc7fc73f4953ba126ff39ad0047f
-      expression: 'last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present)=1 and (last(/Template App OpenClaw Gateway/openclaw.tools.blocked.total)-min(/Template App OpenClaw Gateway/openclaw.tools.blocked.total,5m))>={$OPENCLAW_TOOL_BLOCKED_WARN}'
+      expression: |
+        min(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present,10m)=1
+        and
+        (
+          last(/Template App OpenClaw Gateway/openclaw.tools.blocked.total)
+          -
+          min(/Template App OpenClaw Gateway/openclaw.tools.blocked.total,10m)
+        )>={$OPENCLAW_TOOL_BLOCKED_WARN}
       name: 'OpenClaw: Tool executions were blocked'
       priority: INFO
-      description: 'The blocked-tool counter increased by the configured amount during the last five minutes.'
+      description: 'The blocked-tool counter increased by the configured amount during the last ten minutes, after telemetry has been continuously available for that window.'
       tags:
         - tag: scope
           value: security

@@ -142,16 +142,34 @@ TCP and UserParameter checks on the monitored host.
 | `{$OPENCLAW_PROMETHEUS_TOKEN_FILE}` | `/etc/zabbix/secrets/openclaw_gateway_token` | Bearer credential file |
 | `{$OPENCLAW_PROMETHEUS_INTERVAL}` | `1m` | Optional metrics collection interval |
 | `{$OPENCLAW_PROMETHEUS_REQUIRED}` | `0` | Set to `1` to alert when telemetry is unavailable or empty |
-| `{$OPENCLAW_MODEL_ERRORS_WARN}` | `1` | Model errors in five minutes |
-| `{$OPENCLAW_MODEL_FAILOVERS_WARN}` | `1` | Model failovers in ten minutes |
-| `{$OPENCLAW_TOOL_ERRORS_WARN}` | `1` | Tool errors in five minutes |
-| `{$OPENCLAW_TOOL_BLOCKED_WARN}` | `1` | Blocked tools in five minutes |
-| `{$OPENCLAW_MESSAGE_ERRORS_WARN}` | `1` | Message errors in five minutes |
+| `{$OPENCLAW_MODEL_ERRORS_WARN}` | `3` | Model errors in ten minutes |
+| `{$OPENCLAW_MODEL_FAILOVERS_WARN}` | `3` | Model failovers in fifteen minutes |
+| `{$OPENCLAW_TOOL_ERRORS_WARN}` | `5` | Tool errors in ten minutes |
+| `{$OPENCLAW_TOOL_BLOCKED_WARN}` | `3` | Blocked tools in ten minutes |
+| `{$OPENCLAW_MESSAGE_ERRORS_WARN}` | `5` | Message errors in ten minutes |
 | `{$OPENCLAW_QUEUE_DEPTH_WARN}` | `10` | Session queue depth warning |
-| `{$OPENCLAW_STUCK_SESSIONS_WARN}` | `1` | Stuck-session events in ten minutes |
-| `{$OPENCLAW_LIVENESS_WARNINGS_WARN}` | `1` | Liveness warnings in ten minutes |
-| `{$OPENCLAW_MEMORY_PRESSURE_WARN}` | `1` | Memory-pressure events in ten minutes |
+| `{$OPENCLAW_STUCK_SESSIONS_WARN}` | `2` | Stuck-session events in fifteen minutes |
+| `{$OPENCLAW_LIVENESS_WARNINGS_WARN}` | `5` | Liveness warnings in fifteen minutes |
+| `{$OPENCLAW_MEMORY_PRESSURE_WARN}` | `2` | Memory-pressure events in fifteen minutes |
 | `{$OPENCLAW_COST_DAILY_WARN_USD}` | `0` | Daily cost warning; zero disables it |
+
+
+### Alert noise control
+
+Prometheus event counters are intentionally not alerted on every single event.
+The default thresholds require several events within a 10- or 15-minute window
+before creating a problem. Liveness warnings and blocked-tool events are
+informational by default; memory-pressure and stuck-session events use Average
+severity.
+
+Counter-based triggers also require
+`openclaw.prometheus.metrics_present=1` continuously for the complete trigger
+window. This prevents false positives after the diagnostics plugin starts,
+restarts or becomes reachable again, when a real cumulative counter replaces
+the collector's temporary fallback value of zero.
+
+Override the threshold macros per host if a particular OpenClaw workload needs
+stricter or looser alerting.
 
 ## Verify the basic checks
 
