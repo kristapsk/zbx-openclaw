@@ -14,6 +14,16 @@ zabbix_export:
         diagnostics-prometheus plugin. When that plugin is enabled, additional
         operational, usage, queue, memory and error metrics are collected from
         its authenticated Prometheus endpoint.
+        
+        A single Gateway needs only the host macros. Extra instances on the
+        same host are discovered from {$OPENCLAW_INSTANCES_FILE}. A missing or
+        empty file creates no extra items.
+        
+        
+        
+        
+        
+        
       groups:
         - name: Templates/Applications
       items:
@@ -571,10 +581,775 @@ zabbix_export:
           tags:
             - tag: component
               value: tools
+      discovery_rules:
+        - uuid: 5950c69d90674e3e88e41f276a083172
+          name: OpenClaw extra instances
+          type: ZABBIX_ACTIVE
+          key: openclaw.discovery[{$OPENCLAW_INSTANCES_FILE}]
+          delay: 5m
+          lifetime: 7d
+          description: Additional OpenClaw Gateway instances on this host. The default instance stays on the static items/macros. A missing file yields an empty list and creates nothing.
+          item_prototypes:
+            - uuid: d7dd25c35221434b89191bddadd5e622
+              name: 'OpenClaw [{#NAME}]: TCP port listening'
+              type: ZABBIX_ACTIVE
+              key: net.tcp.listen[{#PORT}]
+              delay: 30s
+              history: 7d
+              description: Returns 1 when the configured Gateway TCP port is listening locally.
+              tags:
+                - tag: component
+                  value: availability
+                - tag: instance
+                  value: '{#NAME}'
+            - uuid: 0f23d4bcfb894fe78f339a54dd8d3ea5
+              name: 'OpenClaw [{#NAME}]: Diagnostic events dropped, total'
+              type: DEPENDENT
+              key: openclaw.diagnostics.queue.dropped.total[{#NAME}]
+              history: 7d
+              value_type: FLOAT
+              preprocessing:
+                - type: PROMETHEUS_PATTERN
+                  parameters:
+                    - openclaw_diagnostic_async_queue_dropped_total
+                    - function
+                    - sum
+                  error_handler: CUSTOM_VALUE
+                  error_handler_params: '0'
+              master_item:
+                key: openclaw.prometheus["http://{#HOST}:{#PORT}{#PROMETHEUS_PATH}","{#TOKEN_FILE}"]
+              tags:
+                - tag: component
+                  value: telemetry
+                - tag: instance
+                  value: '{#NAME}'
+            - uuid: 3dd0a674499948d881989b98065fa0fe
+              name: 'OpenClaw [{#NAME}]: Diagnostic queue length'
+              type: DEPENDENT
+              key: openclaw.diagnostics.queue.length[{#NAME}]
+              history: 7d
+              value_type: FLOAT
+              preprocessing:
+                - type: PROMETHEUS_PATTERN
+                  parameters:
+                    - openclaw_diagnostic_async_queue_length
+                    - value
+                    - ''
+                  error_handler: CUSTOM_VALUE
+                  error_handler_params: '0'
+              master_item:
+                key: openclaw.prometheus["http://{#HOST}:{#PORT}{#PROMETHEUS_PATH}","{#TOKEN_FILE}"]
+              tags:
+                - tag: component
+                  value: telemetry
+                - tag: instance
+                  value: '{#NAME}'
+            - uuid: f487471ee3ec4b4f8f9fbde9f7e6237d
+              name: 'OpenClaw [{#NAME}]: HTTP health endpoint OK'
+              type: ZABBIX_ACTIVE
+              key: openclaw.http.health["http://{#HOST}:{#PORT}{#HEALTH_PATH}"]
+              delay: 30s
+              history: 7d
+              description: Returns 1 when the local OpenClaw health endpoint returns HTTP 200.
+              tags:
+                - tag: component
+                  value: health
+                - tag: instance
+                  value: '{#NAME}'
+            - uuid: b088e6095abe4aad816765d5900f131d
+              name: 'OpenClaw [{#NAME}]: HTTP health latency'
+              type: ZABBIX_ACTIVE
+              key: openclaw.http.latency_ms["http://{#HOST}:{#PORT}{#HEALTH_PATH}"]
+              delay: 30s
+              history: 7d
+              units: ms
+              description: Local HTTP response time of the OpenClaw health endpoint.
+              tags:
+                - tag: component
+                  value: performance
+                - tag: instance
+                  value: '{#NAME}'
+            - uuid: eb47fcefb5a749c189c5ede5156c6e70
+              name: 'OpenClaw [{#NAME}]: Liveness warnings, total'
+              type: DEPENDENT
+              key: openclaw.liveness.warnings.total[{#NAME}]
+              history: 7d
+              value_type: FLOAT
+              preprocessing:
+                - type: PROMETHEUS_PATTERN
+                  parameters:
+                    - openclaw_liveness_warning_total
+                    - function
+                    - sum
+                  error_handler: CUSTOM_VALUE
+                  error_handler_params: '0'
+              master_item:
+                key: openclaw.prometheus["http://{#HOST}:{#PORT}{#PROMETHEUS_PATH}","{#TOKEN_FILE}"]
+              tags:
+                - tag: component
+                  value: liveness
+                - tag: instance
+                  value: '{#NAME}'
+            - uuid: e3a7b04b7f6840e388d2a3ca42f8f7dc
+              name: 'OpenClaw [{#NAME}]: Memory pressure events, total'
+              type: DEPENDENT
+              key: openclaw.memory.pressure.total[{#NAME}]
+              history: 7d
+              value_type: FLOAT
+              preprocessing:
+                - type: PROMETHEUS_PATTERN
+                  parameters:
+                    - openclaw_memory_pressure_total
+                    - function
+                    - sum
+                  error_handler: CUSTOM_VALUE
+                  error_handler_params: '0'
+              master_item:
+                key: openclaw.prometheus["http://{#HOST}:{#PORT}{#PROMETHEUS_PATH}","{#TOKEN_FILE}"]
+              tags:
+                - tag: component
+                  value: memory
+                - tag: instance
+                  value: '{#NAME}'
+            - uuid: c0116a6a9f81444281c2fff93a0a63e5
+              name: 'OpenClaw [{#NAME}]: RSS memory'
+              type: DEPENDENT
+              key: openclaw.memory.rss.bytes[{#NAME}]
+              history: 7d
+              value_type: FLOAT
+              units: B
+              preprocessing:
+                - type: PROMETHEUS_PATTERN
+                  parameters:
+                    - openclaw_memory_bytes{kind="rss"}
+                    - value
+                    - ''
+                  error_handler: CUSTOM_VALUE
+                  error_handler_params: '0'
+              master_item:
+                key: openclaw.prometheus["http://{#HOST}:{#PORT}{#PROMETHEUS_PATH}","{#TOKEN_FILE}"]
+              tags:
+                - tag: component
+                  value: memory
+                - tag: instance
+                  value: '{#NAME}'
+            - uuid: b601c661b8bf4d4585958bfae4b92a09
+              name: 'OpenClaw [{#NAME}]: Message delivery errors, total'
+              type: DEPENDENT
+              key: openclaw.messages.delivery.errors.total[{#NAME}]
+              history: 7d
+              value_type: FLOAT
+              preprocessing:
+                - type: PROMETHEUS_PATTERN
+                  parameters:
+                    - openclaw_message_delivery_total{outcome="error"}
+                    - function
+                    - sum
+                  error_handler: CUSTOM_VALUE
+                  error_handler_params: '0'
+              master_item:
+                key: openclaw.prometheus["http://{#HOST}:{#PORT}{#PROMETHEUS_PATH}","{#TOKEN_FILE}"]
+              tags:
+                - tag: component
+                  value: messages
+                - tag: instance
+                  value: '{#NAME}'
+            - uuid: 969f15373d4c4a9a8414bd67d0589d5a
+              name: 'OpenClaw [{#NAME}]: Message processing errors, total'
+              type: DEPENDENT
+              key: openclaw.messages.processed.errors.total[{#NAME}]
+              history: 7d
+              value_type: FLOAT
+              preprocessing:
+                - type: PROMETHEUS_PATTERN
+                  parameters:
+                    - openclaw_message_processed_total{outcome="error"}
+                    - function
+                    - sum
+                  error_handler: CUSTOM_VALUE
+                  error_handler_params: '0'
+              master_item:
+                key: openclaw.prometheus["http://{#HOST}:{#PORT}{#PROMETHEUS_PATH}","{#TOKEN_FILE}"]
+              tags:
+                - tag: component
+                  value: messages
+                - tag: instance
+                  value: '{#NAME}'
+            - uuid: ad98dd1e9d50488c8e8e55ed5806dff5
+              name: 'OpenClaw [{#NAME}]: Model calls, total'
+              type: DEPENDENT
+              key: openclaw.model.calls.total[{#NAME}]
+              history: 7d
+              value_type: FLOAT
+              preprocessing:
+                - type: PROMETHEUS_PATTERN
+                  parameters:
+                    - openclaw_model_call_total
+                    - function
+                    - sum
+                  error_handler: CUSTOM_VALUE
+                  error_handler_params: '0'
+              master_item:
+                key: openclaw.prometheus["http://{#HOST}:{#PORT}{#PROMETHEUS_PATH}","{#TOKEN_FILE}"]
+              tags:
+                - tag: component
+                  value: model
+                - tag: instance
+                  value: '{#NAME}'
+            - uuid: dbf617eba8ba47bc888675f42c9b02de
+              name: 'OpenClaw [{#NAME}]: Model cost, total'
+              type: DEPENDENT
+              key: openclaw.model.cost.usd.total[{#NAME}]
+              history: 7d
+              value_type: FLOAT
+              units: USD
+              preprocessing:
+                - type: PROMETHEUS_PATTERN
+                  parameters:
+                    - openclaw_model_cost_usd_total
+                    - function
+                    - sum
+                  error_handler: CUSTOM_VALUE
+                  error_handler_params: '0'
+              master_item:
+                key: openclaw.prometheus["http://{#HOST}:{#PORT}{#PROMETHEUS_PATH}","{#TOKEN_FILE}"]
+              tags:
+                - tag: component
+                  value: usage
+                - tag: instance
+                  value: '{#NAME}'
+            - uuid: 30a78fe3f11e4a378c4f54145b39058f
+              name: 'OpenClaw [{#NAME}]: Model call errors, total'
+              type: DEPENDENT
+              key: openclaw.model.errors.total[{#NAME}]
+              history: 7d
+              value_type: FLOAT
+              preprocessing:
+                - type: PROMETHEUS_PATTERN
+                  parameters:
+                    - openclaw_model_call_total{outcome="error"}
+                    - function
+                    - sum
+                  error_handler: CUSTOM_VALUE
+                  error_handler_params: '0'
+              master_item:
+                key: openclaw.prometheus["http://{#HOST}:{#PORT}{#PROMETHEUS_PATH}","{#TOKEN_FILE}"]
+              tags:
+                - tag: component
+                  value: model
+                - tag: instance
+                  value: '{#NAME}'
+            - uuid: ea6d579646614d258310e0374fcf9d18
+              name: 'OpenClaw [{#NAME}]: Model failovers, total'
+              type: DEPENDENT
+              key: openclaw.model.failovers.total[{#NAME}]
+              history: 7d
+              value_type: FLOAT
+              preprocessing:
+                - type: PROMETHEUS_PATTERN
+                  parameters:
+                    - openclaw_model_failover_total
+                    - function
+                    - sum
+                  error_handler: CUSTOM_VALUE
+                  error_handler_params: '0'
+              master_item:
+                key: openclaw.prometheus["http://{#HOST}:{#PORT}{#PROMETHEUS_PATH}","{#TOKEN_FILE}"]
+              tags:
+                - tag: component
+                  value: model
+                - tag: instance
+                  value: '{#NAME}'
+            - uuid: a17fd64cac524e818902d86a5059d39a
+              name: 'OpenClaw [{#NAME}]: Input tokens, total'
+              type: DEPENDENT
+              key: openclaw.model.tokens.input.total[{#NAME}]
+              history: 7d
+              value_type: FLOAT
+              units: tokens
+              preprocessing:
+                - type: PROMETHEUS_PATTERN
+                  parameters:
+                    - openclaw_model_tokens_total{token_type="input"}
+                    - function
+                    - sum
+                  error_handler: CUSTOM_VALUE
+                  error_handler_params: '0'
+              master_item:
+                key: openclaw.prometheus["http://{#HOST}:{#PORT}{#PROMETHEUS_PATH}","{#TOKEN_FILE}"]
+              tags:
+                - tag: component
+                  value: usage
+                - tag: instance
+                  value: '{#NAME}'
+            - uuid: b27fe2e405bd4c2a85c8925cad1cdb80
+              name: 'OpenClaw [{#NAME}]: Output tokens, total'
+              type: DEPENDENT
+              key: openclaw.model.tokens.output.total[{#NAME}]
+              history: 7d
+              value_type: FLOAT
+              units: tokens
+              preprocessing:
+                - type: PROMETHEUS_PATTERN
+                  parameters:
+                    - openclaw_model_tokens_total{token_type="output"}
+                    - function
+                    - sum
+                  error_handler: CUSTOM_VALUE
+                  error_handler_params: '0'
+              master_item:
+                key: openclaw.prometheus["http://{#HOST}:{#PORT}{#PROMETHEUS_PATH}","{#TOKEN_FILE}"]
+              tags:
+                - tag: component
+                  value: usage
+                - tag: instance
+                  value: '{#NAME}'
+            - uuid: f00490956c954b0081b7f0105bcb4e67
+              name: 'OpenClaw [{#NAME}]: Prometheus endpoint available'
+              type: DEPENDENT
+              key: openclaw.prometheus.available[{#NAME}]
+              history: 7d
+              description: Returns 1 when the optional Prometheus endpoint returns HTTP 200.
+              preprocessing:
+                - type: PROMETHEUS_PATTERN
+                  parameters:
+                    - zbx_openclaw_prometheus_available
+                    - value
+                    - ''
+                  error_handler: CUSTOM_VALUE
+                  error_handler_params: '0'
+              master_item:
+                key: openclaw.prometheus["http://{#HOST}:{#PORT}{#PROMETHEUS_PATH}","{#TOKEN_FILE}"]
+              tags:
+                - tag: component
+                  value: telemetry
+                - tag: instance
+                  value: '{#NAME}'
+            - uuid: 9d1156a716504f0a81e511aa71f9cc4c
+              name: 'OpenClaw [{#NAME}]: Prometheus endpoint HTTP status'
+              type: DEPENDENT
+              key: openclaw.prometheus.http_status[{#NAME}]
+              history: 7d
+              description: HTTP status from the optional Prometheus endpoint; zero means a transport failure.
+              preprocessing:
+                - type: PROMETHEUS_PATTERN
+                  parameters:
+                    - zbx_openclaw_prometheus_http_status
+                    - value
+                    - ''
+                  error_handler: CUSTOM_VALUE
+                  error_handler_params: '0'
+              master_item:
+                key: openclaw.prometheus["http://{#HOST}:{#PORT}{#PROMETHEUS_PATH}","{#TOKEN_FILE}"]
+              tags:
+                - tag: component
+                  value: telemetry
+                - tag: instance
+                  value: '{#NAME}'
+            - uuid: 070df7bad4d14d6b833d408b769630da
+              name: 'OpenClaw [{#NAME}]: Prometheus metrics present'
+              type: DEPENDENT
+              key: openclaw.prometheus.metrics_present[{#NAME}]
+              history: 7d
+              description: Returns 1 when the response contains OpenClaw Prometheus metrics.
+              preprocessing:
+                - type: PROMETHEUS_PATTERN
+                  parameters:
+                    - zbx_openclaw_prometheus_metrics_present
+                    - value
+                    - ''
+                  error_handler: CUSTOM_VALUE
+                  error_handler_params: '0'
+              master_item:
+                key: openclaw.prometheus["http://{#HOST}:{#PORT}{#PROMETHEUS_PATH}","{#TOKEN_FILE}"]
+              tags:
+                - tag: component
+                  value: telemetry
+                - tag: instance
+                  value: '{#NAME}'
+            - uuid: 9f6a76d6c74446918908720fef7370a7
+              name: 'OpenClaw [{#NAME}]: Prometheus series dropped, total'
+              type: DEPENDENT
+              key: openclaw.prometheus.series_dropped.total[{#NAME}]
+              history: 7d
+              value_type: FLOAT
+              preprocessing:
+                - type: PROMETHEUS_PATTERN
+                  parameters:
+                    - openclaw_prometheus_series_dropped_total
+                    - value
+                    - ''
+                  error_handler: CUSTOM_VALUE
+                  error_handler_params: '0'
+              master_item:
+                key: openclaw.prometheus["http://{#HOST}:{#PORT}{#PROMETHEUS_PATH}","{#TOKEN_FILE}"]
+              tags:
+                - tag: component
+                  value: telemetry
+                - tag: instance
+                  value: '{#NAME}'
+            - uuid: 0e841262d77a43708efb3455846f9040
+              name: 'OpenClaw [{#NAME}]: Prometheus metrics raw'
+              type: ZABBIX_ACTIVE
+              key: openclaw.prometheus["http://{#HOST}:{#PORT}{#PROMETHEUS_PATH}","{#TOKEN_FILE}"]
+              delay: '{$OPENCLAW_PROMETHEUS_INTERVAL}'
+              history: '0'
+              value_type: TEXT
+              description: 'Prometheus exposition collected locally from OpenClaw. The collector
+
+                adds synthetic endpoint-status metrics and remains supported when
+
+                diagnostics-prometheus is not installed, not enabled or inaccessible.
+
+                '
+              tags:
+                - tag: component
+                  value: raw
+                - tag: instance
+                  value: '{#NAME}'
+            - uuid: e14104e2b8b74e518091ec8fd7d420c7
+              name: 'OpenClaw [{#NAME}]: Queue lane size'
+              type: DEPENDENT
+              key: openclaw.queue.lane.size[{#NAME}]
+              history: 7d
+              value_type: FLOAT
+              preprocessing:
+                - type: PROMETHEUS_PATTERN
+                  parameters:
+                    - openclaw_queue_lane_size
+                    - function
+                    - sum
+                  error_handler: CUSTOM_VALUE
+                  error_handler_params: '0'
+              master_item:
+                key: openclaw.prometheus["http://{#HOST}:{#PORT}{#PROMETHEUS_PATH}","{#TOKEN_FILE}"]
+              tags:
+                - tag: component
+                  value: queue
+                - tag: instance
+                  value: '{#NAME}'
+            - uuid: e226f6d3c78b4895801fd460d9f96203
+              name: 'OpenClaw [{#NAME}]: Runs completed, total'
+              type: DEPENDENT
+              key: openclaw.runs.completed.total[{#NAME}]
+              history: 7d
+              value_type: FLOAT
+              description: Sum of openclaw_run_completed_total across all labels.
+              preprocessing:
+                - type: PROMETHEUS_PATTERN
+                  parameters:
+                    - openclaw_run_completed_total
+                    - function
+                    - sum
+                  error_handler: CUSTOM_VALUE
+                  error_handler_params: '0'
+              master_item:
+                key: openclaw.prometheus["http://{#HOST}:{#PORT}{#PROMETHEUS_PATH}","{#TOKEN_FILE}"]
+              tags:
+                - tag: component
+                  value: runs
+                - tag: instance
+                  value: '{#NAME}'
+            - uuid: 99f5c0c15add48d88bb93868e482ef2d
+              name: 'OpenClaw [{#NAME}]: Failed runs, total'
+              type: DEPENDENT
+              key: openclaw.runs.failed.total[{#NAME}]
+              history: 7d
+              value_type: FLOAT
+              description: Sum of completed runs with outcome="error".
+              preprocessing:
+                - type: PROMETHEUS_PATTERN
+                  parameters:
+                    - openclaw_run_completed_total{outcome="error"}
+                    - function
+                    - sum
+                  error_handler: CUSTOM_VALUE
+                  error_handler_params: '0'
+              master_item:
+                key: openclaw.prometheus["http://{#HOST}:{#PORT}{#PROMETHEUS_PATH}","{#TOKEN_FILE}"]
+              tags:
+                - tag: component
+                  value: runs
+                - tag: instance
+                  value: '{#NAME}'
+            - uuid: e45b95863f394da58f0f56588b5cc61f
+              name: 'OpenClaw [{#NAME}]: Session queue depth'
+              type: DEPENDENT
+              key: openclaw.session.queue.depth[{#NAME}]
+              history: 7d
+              value_type: FLOAT
+              preprocessing:
+                - type: PROMETHEUS_PATTERN
+                  parameters:
+                    - openclaw_session_queue_depth
+                    - function
+                    - sum
+                  error_handler: CUSTOM_VALUE
+                  error_handler_params: '0'
+              master_item:
+                key: openclaw.prometheus["http://{#HOST}:{#PORT}{#PROMETHEUS_PATH}","{#TOKEN_FILE}"]
+              tags:
+                - tag: component
+                  value: queue
+                - tag: instance
+                  value: '{#NAME}'
+            - uuid: df30f8c9b93245208a6186c3cc018b77
+              name: 'OpenClaw [{#NAME}]: Stuck sessions, total'
+              type: DEPENDENT
+              key: openclaw.sessions.stuck.total[{#NAME}]
+              history: 7d
+              value_type: FLOAT
+              preprocessing:
+                - type: PROMETHEUS_PATTERN
+                  parameters:
+                    - openclaw_session_stuck_total
+                    - function
+                    - sum
+                  error_handler: CUSTOM_VALUE
+                  error_handler_params: '0'
+              master_item:
+                key: openclaw.prometheus["http://{#HOST}:{#PORT}{#PROMETHEUS_PATH}","{#TOKEN_FILE}"]
+              tags:
+                - tag: component
+                  value: sessions
+                - tag: instance
+                  value: '{#NAME}'
+            - uuid: f475b589827b4351872f406232c39d00
+              name: 'OpenClaw [{#NAME}]: Telemetry exporter errors, total'
+              type: DEPENDENT
+              key: openclaw.telemetry.exporter.errors.total[{#NAME}]
+              history: 7d
+              value_type: FLOAT
+              preprocessing:
+                - type: PROMETHEUS_PATTERN
+                  parameters:
+                    - openclaw_telemetry_exporter_total{status="error"}
+                    - function
+                    - sum
+                  error_handler: CUSTOM_VALUE
+                  error_handler_params: '0'
+              master_item:
+                key: openclaw.prometheus["http://{#HOST}:{#PORT}{#PROMETHEUS_PATH}","{#TOKEN_FILE}"]
+              tags:
+                - tag: component
+                  value: telemetry
+                - tag: instance
+                  value: '{#NAME}'
+            - uuid: 8ae56bb934ee441c81ee9b55595faa08
+              name: 'OpenClaw [{#NAME}]: Blocked tool executions, total'
+              type: DEPENDENT
+              key: openclaw.tools.blocked.total[{#NAME}]
+              history: 7d
+              value_type: FLOAT
+              preprocessing:
+                - type: PROMETHEUS_PATTERN
+                  parameters:
+                    - openclaw_tool_execution_blocked_total
+                    - function
+                    - sum
+                  error_handler: CUSTOM_VALUE
+                  error_handler_params: '0'
+              master_item:
+                key: openclaw.prometheus["http://{#HOST}:{#PORT}{#PROMETHEUS_PATH}","{#TOKEN_FILE}"]
+              tags:
+                - tag: component
+                  value: security
+                - tag: instance
+                  value: '{#NAME}'
+            - uuid: f9ca633dea8f451188a087e89fbd5e53
+              name: 'OpenClaw [{#NAME}]: Tool execution errors, total'
+              type: DEPENDENT
+              key: openclaw.tools.errors.total[{#NAME}]
+              history: 7d
+              value_type: FLOAT
+              preprocessing:
+                - type: PROMETHEUS_PATTERN
+                  parameters:
+                    - openclaw_tool_execution_total{outcome="error"}
+                    - function
+                    - sum
+                  error_handler: CUSTOM_VALUE
+                  error_handler_params: '0'
+              master_item:
+                key: openclaw.prometheus["http://{#HOST}:{#PORT}{#PROMETHEUS_PATH}","{#TOKEN_FILE}"]
+              tags:
+                - tag: component
+                  value: tools
+                - tag: instance
+                  value: '{#NAME}'
+            - uuid: 1df977c3c32b42aa89c48667c698e891
+              name: 'OpenClaw [{#NAME}]: Tool executions, total'
+              type: DEPENDENT
+              key: openclaw.tools.executions.total[{#NAME}]
+              history: 7d
+              value_type: FLOAT
+              preprocessing:
+                - type: PROMETHEUS_PATTERN
+                  parameters:
+                    - openclaw_tool_execution_total
+                    - function
+                    - sum
+                  error_handler: CUSTOM_VALUE
+                  error_handler_params: '0'
+              master_item:
+                key: openclaw.prometheus["http://{#HOST}:{#PORT}{#PROMETHEUS_PATH}","{#TOKEN_FILE}"]
+              tags:
+                - tag: component
+                  value: tools
+                - tag: instance
+                  value: '{#NAME}'
+          trigger_prototypes:
+            - uuid: 0a95c52d6cb24dc28ed961ada55f394b
+              expression: max(/Template App OpenClaw Gateway/net.tcp.listen[{#PORT}],2m)=0
+              name: 'OpenClaw [{#NAME}]: Gateway port is not listening'
+              priority: HIGH
+              description: The OpenClaw Gateway port has not been listening for two minutes.
+              tags:
+                - tag: scope
+                  value: availability
+            - uuid: 8561fb1cfc6b449b854a3e0997c684ea
+              expression: '{$OPENCLAW_COST_DAILY_WARN_USD}>0 and last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present[{#NAME}])=1 and (last(/Template App OpenClaw Gateway/openclaw.model.cost.usd.total[{#NAME}])-min(/Template App OpenClaw Gateway/openclaw.model.cost.usd.total[{#NAME}],1d))>{$OPENCLAW_COST_DAILY_WARN_USD}'
+              name: 'OpenClaw [{#NAME}]: Daily model cost is high'
+              priority: WARNING
+              description: Disabled by default. Set {$OPENCLAW_COST_DAILY_WARN_USD} to a positive amount to enable it.
+              tags:
+                - tag: scope
+                  value: capacity
+            - uuid: e1d06bcc9560475a808ef404efb85bed
+              expression: "min(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present[{#NAME}],10m)=1\nand\n(\n  last(/Template App OpenClaw Gateway/openclaw.diagnostics.queue.dropped.total[{#NAME}])\n  -\n  min(/Template App OpenClaw Gateway/openclaw.diagnostics.queue.dropped.total[{#NAME}],10m)\n)>0\n"
+              name: 'OpenClaw [{#NAME}]: Diagnostic events are being dropped'
+              priority: WARNING
+              tags:
+                - tag: scope
+                  value: capacity
+            - uuid: b15be5ef232842fd85e5ea432cc80897
+              expression: max(/Template App OpenClaw Gateway/openclaw.http.health["http://{#HOST}:{#PORT}{#HEALTH_PATH}"],3m)=0 and last(/Template App OpenClaw Gateway/net.tcp.listen[{#PORT}])=1
+              name: 'OpenClaw [{#NAME}]: Health endpoint is failing'
+              priority: HIGH
+              description: The Gateway port is listening, but the health endpoint has not returned HTTP 200 for three minutes.
+              tags:
+                - tag: scope
+                  value: availability
+            - uuid: d10c46b2008f48b186045561821c813a
+              expression: avg(/Template App OpenClaw Gateway/openclaw.http.latency_ms["http://{#HOST}:{#PORT}{#HEALTH_PATH}"],5m)>{$OPENCLAW_LATENCY_WARN_MS} and last(/Template App OpenClaw Gateway/openclaw.http.health["http://{#HOST}:{#PORT}{#HEALTH_PATH}"])=1
+              name: 'OpenClaw [{#NAME}]: Health endpoint latency is high'
+              priority: WARNING
+              description: Average local health-endpoint latency exceeds the configured threshold.
+              tags:
+                - tag: scope
+                  value: performance
+            - uuid: 46e4ece003fb4fe3879b331092d60d61
+              expression: "min(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present[{#NAME}],15m)=1\nand\n(\n  last(/Template App OpenClaw Gateway/openclaw.liveness.warnings.total[{#NAME}])\n  -\n  min(/Template App OpenClaw Gateway/openclaw.liveness.warnings.total[{#NAME}],15m)\n)>={$OPENCLAW_LIVENESS_WARNINGS_WARN}\n"
+              name: 'OpenClaw [{#NAME}]: Liveness warnings detected'
+              priority: INFO
+              tags:
+                - tag: scope
+                  value: performance
+            - uuid: 91c228e4cd2d4d9c871f17a83a6a71ac
+              expression: "min(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present[{#NAME}],15m)=1\nand\n(\n  last(/Template App OpenClaw Gateway/openclaw.memory.pressure.total[{#NAME}])\n  -\n  min(/Template App OpenClaw Gateway/openclaw.memory.pressure.total[{#NAME}],15m)\n)>={$OPENCLAW_MEMORY_PRESSURE_WARN}\n"
+              name: 'OpenClaw [{#NAME}]: Memory pressure detected'
+              priority: AVERAGE
+              tags:
+                - tag: scope
+                  value: capacity
+            - uuid: be4cbdb17600475a85f6c468ebe5d7b6
+              expression: "min(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present[{#NAME}],10m)=1\nand\n(\n  last(/Template App OpenClaw Gateway/openclaw.messages.delivery.errors.total[{#NAME}])\n  -\n  min(/Template App OpenClaw Gateway/openclaw.messages.delivery.errors.total[{#NAME}],10m)\n)>={$OPENCLAW_MESSAGE_ERRORS_WARN}\n"
+              name: 'OpenClaw [{#NAME}]: Message delivery errors detected'
+              priority: WARNING
+              tags:
+                - tag: scope
+                  value: performance
+            - uuid: d93b9a5d9aa3468b84ed697f5ae43486
+              expression: "min(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present[{#NAME}],10m)=1\nand\n(\n  last(/Template App OpenClaw Gateway/openclaw.messages.processed.errors.total[{#NAME}])\n  -\n  min(/Template App OpenClaw Gateway/openclaw.messages.processed.errors.total[{#NAME}],10m)\n)>={$OPENCLAW_MESSAGE_ERRORS_WARN}\n"
+              name: 'OpenClaw [{#NAME}]: Message processing errors detected'
+              priority: WARNING
+              tags:
+                - tag: scope
+                  value: performance
+            - uuid: 26cfb208ec7346e587a4dfd956c04011
+              expression: "min(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present[{#NAME}],10m)=1\nand\n(\n  last(/Template App OpenClaw Gateway/openclaw.model.errors.total[{#NAME}])\n  -\n  min(/Template App OpenClaw Gateway/openclaw.model.errors.total[{#NAME}],10m)\n)>={$OPENCLAW_MODEL_ERRORS_WARN}\n"
+              name: 'OpenClaw [{#NAME}]: Model call errors detected'
+              priority: WARNING
+              description: The model-error counter increased by the configured amount during the last ten minutes, after telemetry has been continuously available for that window.
+              tags:
+                - tag: scope
+                  value: performance
+            - uuid: 5a50775e2ab24f4589d6cca2bff8fa3b
+              expression: "min(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present[{#NAME}],15m)=1\nand\n(\n  last(/Template App OpenClaw Gateway/openclaw.model.failovers.total[{#NAME}])\n  -\n  min(/Template App OpenClaw Gateway/openclaw.model.failovers.total[{#NAME}],15m)\n)>={$OPENCLAW_MODEL_FAILOVERS_WARN}\n"
+              name: 'OpenClaw [{#NAME}]: Model failovers detected'
+              priority: WARNING
+              description: The model-failover counter increased by the configured amount during the last fifteen minutes, after telemetry has been continuously available for that window.
+              tags:
+                - tag: scope
+                  value: performance
+            - uuid: ee6e9c726699438b8067f232839bfb14
+              expression: "min(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present[{#NAME}],10m)=1\nand\n(\n  last(/Template App OpenClaw Gateway/openclaw.prometheus.series_dropped.total[{#NAME}])\n  -\n  min(/Template App OpenClaw Gateway/openclaw.prometheus.series_dropped.total[{#NAME}],10m)\n)>0\n"
+              name: 'OpenClaw [{#NAME}]: Prometheus series are being dropped'
+              priority: WARNING
+              description: The exporter reached or exceeded its retained-series capacity.
+              tags:
+                - tag: scope
+                  value: capacity
+            - uuid: bea3d7700ea64f4183ec072c68d66cfb
+              expression: '{$OPENCLAW_PROMETHEUS_REQUIRED}=1 and max(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present[{#NAME}],5m)=0 and last(/Template App OpenClaw Gateway/openclaw.prometheus.available[{#NAME}])=1'
+              name: 'OpenClaw [{#NAME}]: Required Prometheus endpoint contains no metrics'
+              priority: WARNING
+              description: The endpoint responds, but diagnostics data is empty. Enabled only when {$OPENCLAW_PROMETHEUS_REQUIRED}=1.
+              tags:
+                - tag: scope
+                  value: availability
+            - uuid: 53dc0fc345eb4aa8814c92f9eb2f9314
+              expression: '{$OPENCLAW_PROMETHEUS_REQUIRED}=1 and max(/Template App OpenClaw Gateway/openclaw.prometheus.available[{#NAME}],5m)=0 and last(/Template App OpenClaw Gateway/net.tcp.listen[{#PORT}])=1'
+              name: 'OpenClaw [{#NAME}]: Required Prometheus endpoint is unavailable'
+              priority: WARNING
+              description: Enabled only when {$OPENCLAW_PROMETHEUS_REQUIRED}=1.
+              tags:
+                - tag: scope
+                  value: availability
+            - uuid: 88df209ea94e4fa68ef4fdfae608e6fc
+              expression: last(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present[{#NAME}])=1 and max(/Template App OpenClaw Gateway/openclaw.session.queue.depth[{#NAME}],5m)>{$OPENCLAW_QUEUE_DEPTH_WARN}
+              name: 'OpenClaw [{#NAME}]: Session queue depth is high'
+              priority: WARNING
+              tags:
+                - tag: scope
+                  value: capacity
+            - uuid: 1536b57bb30e44c48149e7587a484c80
+              expression: "min(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present[{#NAME}],15m)=1\nand\n(\n  last(/Template App OpenClaw Gateway/openclaw.sessions.stuck.total[{#NAME}])\n  -\n  min(/Template App OpenClaw Gateway/openclaw.sessions.stuck.total[{#NAME}],15m)\n)>={$OPENCLAW_STUCK_SESSIONS_WARN}\n"
+              name: 'OpenClaw [{#NAME}]: Stuck sessions detected'
+              priority: AVERAGE
+              tags:
+                - tag: scope
+                  value: availability
+            - uuid: 0c68d62a757743ec80f111e7d3346805
+              expression: "min(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present[{#NAME}],10m)=1\nand\n(\n  last(/Template App OpenClaw Gateway/openclaw.telemetry.exporter.errors.total[{#NAME}])\n  -\n  min(/Template App OpenClaw Gateway/openclaw.telemetry.exporter.errors.total[{#NAME}],10m)\n)>0\n"
+              name: 'OpenClaw [{#NAME}]: Telemetry exporter errors detected'
+              priority: WARNING
+              tags:
+                - tag: scope
+                  value: performance
+            - uuid: 33c5beec0a264a0681826f10fb7c9817
+              expression: "min(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present[{#NAME}],10m)=1\nand\n(\n  last(/Template App OpenClaw Gateway/openclaw.tools.errors.total[{#NAME}])\n  -\n  min(/Template App OpenClaw Gateway/openclaw.tools.errors.total[{#NAME}],10m)\n)>={$OPENCLAW_TOOL_ERRORS_WARN}\n"
+              name: 'OpenClaw [{#NAME}]: Tool execution errors detected'
+              priority: WARNING
+              description: The tool-error counter increased by the configured amount during the last ten minutes, after telemetry has been continuously available for that window.
+              tags:
+                - tag: scope
+                  value: performance
+            - uuid: 4e4b368d2dd141338124179168a1e768
+              expression: "min(/Template App OpenClaw Gateway/openclaw.prometheus.metrics_present[{#NAME}],10m)=1\nand\n(\n  last(/Template App OpenClaw Gateway/openclaw.tools.blocked.total[{#NAME}])\n  -\n  min(/Template App OpenClaw Gateway/openclaw.tools.blocked.total[{#NAME}],10m)\n)>={$OPENCLAW_TOOL_BLOCKED_WARN}\n"
+              name: 'OpenClaw [{#NAME}]: Tool executions were blocked'
+              priority: INFO
+              description: The blocked-tool counter increased by the configured amount during the last ten minutes, after telemetry has been continuously available for that window.
+              tags:
+                - tag: scope
+                  value: security
       macros:
         - macro: '{$OPENCLAW_COST_DAILY_WARN_USD}'
           value: '0'
           description: 'Daily model-cost warning threshold in USD. Zero disables the trigger.'
+        - macro: '{$OPENCLAW_INSTANCES_FILE}'
+          value: /etc/zabbix/openclaw.instances.json
+          description: 'JSON file of extra OpenClaw instances. Missing or empty = only the default instance.'
         - macro: '{$OPENCLAW_HEALTH_PATH}'
           value: /health
           description: 'Unauthenticated OpenClaw liveness endpoint.'

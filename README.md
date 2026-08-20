@@ -19,10 +19,15 @@ The basic TCP and HTTP checks continue to work when the OpenClaw
 .
 ├── README.md
 ├── Template_OpenClaw_Gateway_Agent2.yaml
+├── examples
+│   └── openclaw.instances.json
 ├── scripts
+│   ├── openclaw_discovery.py
 │   ├── openclaw_http_check.sh
 │   ├── openclaw_http_latency_ms.sh
 │   └── openclaw_prometheus.sh
+├── tools
+│   └── inject_extra_instance_lld.py
 └── zabbix_agent2.d
     └── openclaw.conf
 ```
@@ -81,6 +86,8 @@ sudo install -m 0755 scripts/openclaw_http_latency_ms.sh \
   /etc/zabbix/scripts/openclaw_http_latency_ms.sh
 sudo install -m 0755 scripts/openclaw_prometheus.sh \
   /etc/zabbix/scripts/openclaw_prometheus.sh
+sudo install -m 0755 scripts/openclaw_discovery.py \
+  /etc/zabbix/scripts/openclaw_discovery.py
 
 sudo install -d -m 0755 /etc/zabbix/zabbix_agent2.d
 sudo install -m 0644 zabbix_agent2.d/openclaw.conf \
@@ -93,6 +100,7 @@ The installed UserParameters are:
 UserParameter=openclaw.http.health[*],/etc/zabbix/scripts/openclaw_http_check.sh "$1"
 UserParameter=openclaw.http.latency_ms[*],/etc/zabbix/scripts/openclaw_http_latency_ms.sh "$1"
 UserParameter=openclaw.prometheus[*],/etc/zabbix/scripts/openclaw_prometheus.sh "$1" "$2"
+UserParameter=openclaw.discovery[*],/etc/zabbix/scripts/openclaw_discovery.py "$1"
 ```
 
 Confirm that the agent2 main configuration includes the directory. Packaged
@@ -135,6 +143,7 @@ TCP and UserParameter checks on the monitored host.
 | Macro | Default | Purpose |
 |---|---:|---|
 | `{$OPENCLAW_HOST}` | `127.0.0.1` | Host used by local HTTP checks |
+| `{$OPENCLAW_INSTANCES_FILE}` | `/etc/zabbix/openclaw.instances.json` | Extra instances; missing/empty = only the default |
 | `{$OPENCLAW_PORT}` | `18789` | Gateway TCP port |
 | `{$OPENCLAW_HEALTH_PATH}` | `/health` | Basic liveness path |
 | `{$OPENCLAW_LATENCY_WARN_MS}` | `500` | Five-minute average latency warning |
@@ -170,6 +179,56 @@ the collector's temporary fallback value of zero.
 
 Override the threshold macros per host if a particular OpenClaw workload needs
 stricter or looser alerting.
+
+## Multiple instances on one host
+
+One Zabbix host and one `zabbix_agent2` process monitor every OpenClaw Gateway
+on that machine. The **default** instance is unchanged: set
+`{$OPENCLAW_PORT}` and the other macros. Do not create a second
+Zabbix host just because a second Gateway listens on another port — active
+checks are tied to a single agent `Hostname`.
+
+Extra instances are optional. If
+`/etc/zabbix/openclaw.instances.json` is missing or contains `[]`, discovery
+returns an empty list and **no extra items are created**.
+
+To add more Gateways (for example a second agent on `:19001`):
+
+1. Install `scripts/openclaw_discovery.py` and the updated `openclaw.conf`
+   UserParameter (already listed in the install steps).
+2. Create the instances file. List **only extra instances**, not the default
+   port already covered by `{$OPENCLAW_PORT}`:
+
+```json
+[
+  {
+    "name": "orion",
+    "port": 19001,
+    "token_file": "/etc/zabbix/secrets/openclaw_orion_token"
+  }
+]
+```
+
+Required fields: `name` (letters, digits, `.`, `_`, `-`) and `port`.
+Optional: `token_file` (default `/etc/zabbix/secrets/openclaw_<name>_token`),
+`host` (default `127.0.0.1`), `health_path`, `prometheus_path`.
+
+3. Install a separate token file per extra instance if you collect Prometheus
+   metrics. Restart agent2.
+
+```bash
+sudo install -m 0644 examples/openclaw.instances.json \
+  /etc/zabbix/openclaw.instances.json
+sudo systemctl restart zabbix-agent2
+zabbix_agent2 -t 'openclaw.discovery["/etc/zabbix/openclaw.instances.json"]'
+```
+
+Discovery runs every five minutes. Extra items and triggers are named
+`OpenClaw [<name>]: …` and tagged with `instance=<name>`.
+
+If you later add or remove static items in the template, regenerate the extra
+instance prototypes with `python3 tools/inject_extra_instance_lld.py` from a
+checkout that still has the static items plus this script.
 
 ## Verify the basic checks
 
@@ -417,8 +476,10 @@ sudo -u zabbix /etc/zabbix/scripts/openclaw_prometheus.sh \
 
 This template intentionally aggregates labelled Prometheus series into a small
 set of operational totals. It does not perform low-level discovery for every
-provider, model, agent, channel or tool label. This limits item count and avoids
-high-cardinality Zabbix configurations while still providing useful alerts.
+provider, model, agent, channel or tool label. Low-level discovery is used only
+for extra OpenClaw Gateway processes on the same host. This limits item count
+and avoids high-cardinality Zabbix configurations while still providing useful
+alerts.
 
 OpenClaw caps retained Prometheus series and exposes
 `openclaw_prometheus_series_dropped_total`. The template monitors that counter
