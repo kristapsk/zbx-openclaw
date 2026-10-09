@@ -1,0 +1,7 @@
+[
+  {
+    "name": "orion",
+    "port": 19001,
+    "token_file": "/etc/zabbix/secrets/openclaw_orion_token"
+  }
+]
