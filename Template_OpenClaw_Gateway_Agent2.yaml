@@ -1343,6 +1343,142 @@ zabbix_export:
               tags:
                 - tag: scope
                   value: security
+      dashboards:
+        - uuid: 6f6b8d4e9f2a4b8c9d1e0f3a5b7c2d12
+          name: 'OpenClaw Impact - Multi-instance'
+          pages:
+            - name: Overview
+              widgets:
+                - type: item
+                  name: 'Primary: Gateway health'
+                  x: '0'
+                  y: '0'
+                  width: '18'
+                  height: '5'
+                  fields:
+                    - type: ITEM
+                      name: itemid.0
+                      value:
+                        host: 'Template App OpenClaw Gateway'
+                        key: 'openclaw.http.health["http://{$OPENCLAW_HOST}:{$OPENCLAW_PORT}{$OPENCLAW_HEALTH_PATH}"]'
+                    - type: STRING
+                      name: reference
+                      value: PRIMARY_1
+                - type: item
+                  name: 'Primary: Model calls'
+                  x: '18'
+                  y: '0'
+                  width: '18'
+                  height: '5'
+                  fields:
+                    - type: ITEM
+                      name: itemid.0
+                      value:
+                        host: 'Template App OpenClaw Gateway'
+                        key: 'openclaw.model.calls.total'
+                    - type: STRING
+                      name: reference
+                      value: PRIMARY_2
+                - type: item
+                  name: 'Primary: Model errors'
+                  x: '36'
+                  y: '0'
+                  width: '18'
+                  height: '5'
+                  fields:
+                    - type: ITEM
+                      name: itemid.0
+                      value:
+                        host: 'Template App OpenClaw Gateway'
+                        key: 'openclaw.model.errors.total'
+                    - type: STRING
+                      name: reference
+                      value: PRIMARY_3
+                - type: item
+                  name: 'Primary: Failovers'
+                  x: '54'
+                  y: '0'
+                  width: '18'
+                  height: '5'
+                  fields:
+                    - type: ITEM
+                      name: itemid.0
+                      value:
+                        host: 'Template App OpenClaw Gateway'
+                        key: 'openclaw.model.failovers.total'
+                    - type: STRING
+                      name: reference
+                      value: PRIMARY_4
+                - type: item
+                  name: 'Primary: Input tokens'
+                  x: '0'
+                  y: '5'
+                  width: '18'
+                  height: '5'
+                  fields:
+                    - type: ITEM
+                      name: itemid.0
+                      value:
+                        host: 'Template App OpenClaw Gateway'
+                        key: 'openclaw.model.tokens.input.total'
+                    - type: STRING
+                      name: reference
+                      value: PRIMARY_5
+                - type: item
+                  name: 'Primary: Output tokens'
+                  x: '18'
+                  y: '5'
+                  width: '18'
+                  height: '5'
+                  fields:
+                    - type: ITEM
+                      name: itemid.0
+                      value:
+                        host: 'Template App OpenClaw Gateway'
+                        key: 'openclaw.model.tokens.output.total'
+                    - type: STRING
+                      name: reference
+                      value: PRIMARY_6
+                - type: item
+                  name: 'Primary: Session queue'
+                  x: '36'
+                  y: '5'
+                  width: '18'
+                  height: '5'
+                  fields:
+                    - type: ITEM
+                      name: itemid.0
+                      value:
+                        host: 'Template App OpenClaw Gateway'
+                        key: 'openclaw.session.queue.depth'
+                    - type: STRING
+                      name: reference
+                      value: PRIMARY_7
+                - type: item
+                  name: 'Primary: Memory RSS'
+                  x: '54'
+                  y: '5'
+                  width: '18'
+                  height: '5'
+                  fields:
+                    - type: ITEM
+                      name: itemid.0
+                      value:
+                        host: 'Template App OpenClaw Gateway'
+                        key: 'openclaw.memory.rss.bytes'
+                    - type: STRING
+                      name: reference
+                      value: PRIMARY_8
+                - type: problems
+                  name: 'All OpenClaw instances: problems'
+                  x: '0'
+                  y: '10'
+                  width: '72'
+                  height: '8'
+                  fields:
+                    - type: INTEGER
+                      name: show
+                      value: '3'
       macros:
         - macro: '{$OPENCLAW_COST_DAILY_WARN_USD}'
           value: '0'
